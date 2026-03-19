@@ -353,102 +353,109 @@ function LanguageSection() {
   }, [currentSrc]);
 
   return (
-    <section style={{ padding: "0 24px 80px", maxWidth: 600, margin: "0 auto" }}>
+    <section style={{ padding: "0 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
       <AnimSection>
-        {/* Outer card container — vertical layout: video on top, picker below */}
+        {/* Outer card container */}
         <div style={{
           background: "rgba(21,21,21,0.7)",
           border: "1px solid rgba(255,255,255,0.06)",
-          borderRadius: 24,
+          borderRadius: 24, padding: "48px 0",
           overflow: "hidden",
         }}>
-          {/* Video Preview — top */}
-          <div style={{ position: "relative", width: "100%" }}>
-            <div style={{
-              width: "100%",
-              aspectRatio: "9/10",
-              position: "relative",
-              background: "#000",
-              overflow: "hidden",
-            }}>
-              <video
-                ref={videoRef}
-                autoPlay muted loop playsInline preload="auto"
-                style={{
-                  width: "100%", height: "100%", objectFit: "cover",
-                  opacity: videoOpacity,
-                  transition: "opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
-                  display: "block",
-                }}
-              >
-                <source src={currentSrc} type="video/mp4" />
-              </video>
-
-              {/* Muted speaker icon — top left */}
-              <div style={{
-                position: "absolute", top: 14, left: 14,
-                color: "#48A680", opacity: 0.8,
+          <div className="lang-section-inner" style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr",
+            gap: 0, alignItems: "center",
+          }}>
+            {/* LEFT (desktop) / BOTTOM (mobile) — Language Picker */}
+            <div className="lang-picker" style={{ padding: "0 48px" }}>
+              <h2 style={{
+                fontSize: 28, fontWeight: 700, letterSpacing: "-0.5px",
+                marginBottom: 36, textAlign: "center",
+                fontFamily: "'DM Sans', sans-serif",
               }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                  <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                  <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
+                Select your Language
+              </h2>
+
+              {/* Language pills in rows */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
+                {rows.map((row, ri) => (
+                  <div key={ri} style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+                    {row.map((lang) => {
+                      const idx = languages.indexOf(lang);
+                      const isSelected = selectedIdx === idx;
+                      return (
+                        <button
+                          key={lang.name}
+                          onClick={() => setSelectedIdx(idx)}
+                          className="lang-pill"
+                          style={{
+                            background: isSelected
+                              ? "linear-gradient(135deg, #2d7a5a, #48A680)"
+                              : "rgba(30,30,30,0.8)",
+                            color: isSelected ? "#fff" : "#c0c0c0",
+                            border: isSelected
+                              ? "1px solid rgba(72,166,128,0.5)"
+                              : "1px solid rgba(255,255,255,0.08)",
+                            borderRadius: 999,
+                            padding: "10px 22px",
+                            fontSize: 14, fontWeight: 500,
+                            cursor: "pointer",
+                            transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+                            fontFamily: "'DM Sans', sans-serif",
+                            display: "inline-flex", alignItems: "center", gap: 7,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {isSelected && (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                          <span>{lang.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
 
-          {/* Language Picker — bottom */}
-          <div style={{ padding: "36px 32px 40px" }}>
-            <h2 style={{
-              fontSize: 24, fontWeight: 700, letterSpacing: "-0.5px",
-              marginBottom: 28, textAlign: "center",
-              fontFamily: "'DM Sans', sans-serif",
-            }}>
-              Select your Language
-            </h2>
+            {/* RIGHT (desktop) / TOP (mobile) — Video Preview */}
+            <div className="lang-video" style={{ padding: "0 40px 0 0", display: "flex", justifyContent: "center" }}>
+              <div style={{
+                width: "100%", maxWidth: 420,
+                aspectRatio: "9/14",
+                position: "relative",
+                background: "#000", borderRadius: 16,
+                border: "1px solid rgba(255,255,255,0.06)",
+                overflow: "hidden",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+              }}>
+                <video
+                  ref={videoRef}
+                  autoPlay muted loop playsInline preload="auto"
+                  style={{
+                    width: "100%", height: "100%", objectFit: "cover",
+                    opacity: videoOpacity,
+                    transition: "opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
+                    display: "block",
+                  }}
+                >
+                  <source src={currentSrc} type="video/mp4" />
+                </video>
 
-            {/* Language pills in rows */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
-              {rows.map((row, ri) => (
-                <div key={ri} style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
-                  {row.map((lang) => {
-                    const idx = languages.indexOf(lang);
-                    const isSelected = selectedIdx === idx;
-                    return (
-                      <button
-                        key={lang.name}
-                        onClick={() => setSelectedIdx(idx)}
-                        className="lang-pill"
-                        style={{
-                          background: isSelected
-                            ? "linear-gradient(135deg, #2d7a5a, #48A680)"
-                            : "rgba(30,30,30,0.8)",
-                          color: isSelected ? "#fff" : "#c0c0c0",
-                          border: isSelected
-                            ? "1px solid rgba(72,166,128,0.5)"
-                            : "1px solid rgba(255,255,255,0.08)",
-                          borderRadius: 999,
-                          padding: "10px 20px",
-                          fontSize: 14, fontWeight: 500,
-                          cursor: "pointer",
-                          transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
-                          fontFamily: "'DM Sans', sans-serif",
-                          display: "inline-flex", alignItems: "center", gap: 7,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {isSelected && (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        )}
-                        <span>{lang.name}</span>
-                      </button>
-                    );
-                  })}
+                {/* Muted speaker icon — top left */}
+                <div style={{
+                  position: "absolute", top: 14, left: 14,
+                  color: "#48A680", opacity: 0.8,
+                }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>
@@ -465,6 +472,32 @@ function LanguageSection() {
         }
         .lang-pill:active {
           transform: rotate(0deg) scale(0.96) !important;
+        }
+        @media (max-width: 768px) {
+          .lang-section-inner {
+            display: flex !important;
+            flex-direction: column-reverse !important;
+            gap: 0 !important;
+            padding: 0 !important;
+          }
+          .lang-section-inner .lang-video {
+            padding: 0 !important;
+            order: -1;
+          }
+          .lang-section-inner .lang-video > div {
+            max-width: 100% !important;
+            border-radius: 0 !important;
+            aspect-ratio: 9/10 !important;
+            border: none !important;
+            box-shadow: none !important;
+          }
+          .lang-section-inner .lang-picker {
+            padding: 32px 24px 36px !important;
+          }
+          .lang-section-inner .lang-picker h2 {
+            font-size: 22px !important;
+            margin-bottom: 24px !important;
+          }
         }
       `}</style>
     </section>
