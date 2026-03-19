@@ -158,17 +158,17 @@ function Navbar() {
 
         {/* Desktop links */}
         <div className="desktop-nav-links" style={{ display: "flex", gap: 36, alignItems: "center" }}>
-          {["About", "Testimonials", "Pricing"].map(t => (
-            <a key={t} href={`#${t.toLowerCase()}`} style={{
+          {[{ label: "About", href: "#why" }, { label: "Testimonials", href: "#testimonials" }, { label: "Pricing", href: "#pricing" }].map(t => (
+            <a key={t.label} href={t.href} style={{
               color: "var(--text-secondary)", textDecoration: "none", fontSize: 14,
               fontWeight: 500, transition: "color 0.2s",
             }}
               onMouseEnter={e => e.target.style.color = "var(--text-primary)"}
               onMouseLeave={e => e.target.style.color = "var(--text-secondary)"}>
-              {t}
+              {t.label}
             </a>
           ))}
-          <a href="#pricing" style={{
+          <a href="https://app.kalakar.io/signup" target="_blank" rel="noopener noreferrer" style={{
             background: "#00ffb2", color: "#0c0c0c", padding: "10px 24px",
             borderRadius: 999, textDecoration: "none", fontSize: 14, fontWeight: 600,
             transition: "all 0.3s", border: "none",
@@ -203,12 +203,12 @@ function Navbar() {
           maxWidth: 1200, margin: "8px auto 0", borderRadius: 16,
           border: "1px solid rgba(255,255,255,0.06)",
         }}>
-          {["About", "Testimonials", "Pricing"].map(t => (
-            <a key={t} href={`#${t.toLowerCase()}`} onClick={() => setMobileOpen(false)} style={{
+          {[{ label: "About", href: "#why" }, { label: "Testimonials", href: "#testimonials" }, { label: "Pricing", href: "#pricing" }].map(t => (
+            <a key={t.label} href={t.href} onClick={() => setMobileOpen(false)} style={{
               color: "var(--text-secondary)", textDecoration: "none", fontSize: 16, fontWeight: 500,
-            }}>{t}</a>
+            }}>{t.label}</a>
           ))}
-          <a href="#pricing" onClick={() => setMobileOpen(false)} style={{
+          <a href="https://app.kalakar.io/signup" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} style={{
             background: "#00ffb2", color: "#0c0c0c", padding: "12px 24px",
             borderRadius: 999, textDecoration: "none", fontSize: 14, fontWeight: 600, textAlign: "center",
           }}>Sign In</a>
@@ -353,110 +353,102 @@ function LanguageSection() {
   }, [currentSrc]);
 
   return (
-    <section style={{ padding: "0 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
+    <section style={{ padding: "0 24px 80px", maxWidth: 600, margin: "0 auto" }}>
       <AnimSection>
-        {/* Outer card container */}
+        {/* Outer card container — vertical layout: video on top, picker below */}
         <div style={{
           background: "rgba(21,21,21,0.7)",
           border: "1px solid rgba(255,255,255,0.06)",
-          borderRadius: 24, padding: "48px 0",
+          borderRadius: 24,
           overflow: "hidden",
         }}>
-          <div className="lang-section-inner" style={{
-            display: "grid", gridTemplateColumns: "1fr 1fr",
-            gap: 0, alignItems: "center",
-          }}>
-            {/* LEFT — Language Picker */}
-            <div style={{ padding: "0 48px" }}>
-              <h2 style={{
-                fontSize: 28, fontWeight: 700, letterSpacing: "-0.5px",
-                marginBottom: 36, textAlign: "center",
-                fontFamily: "'DM Sans', sans-serif",
-              }}>
-                Select your Language
-              </h2>
+          {/* Video Preview — top */}
+          <div style={{ position: "relative", width: "100%" }}>
+            <div style={{
+              width: "100%",
+              aspectRatio: "9/10",
+              position: "relative",
+              background: "#000",
+              overflow: "hidden",
+            }}>
+              <video
+                ref={videoRef}
+                autoPlay muted loop playsInline preload="auto"
+                style={{
+                  width: "100%", height: "100%", objectFit: "cover",
+                  opacity: videoOpacity,
+                  transition: "opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
+                  display: "block",
+                }}
+              >
+                <source src={currentSrc} type="video/mp4" />
+              </video>
 
-              {/* Language pills in rows */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
-                {rows.map((row, ri) => (
-                  <div key={ri} style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-                    {row.map((lang) => {
-                      const idx = languages.indexOf(lang);
-                      const isSelected = selectedIdx === idx;
-                      return (
-                        <button
-                          key={lang.name}
-                          onClick={() => setSelectedIdx(idx)}
-                          className="lang-pill"
-                          style={{
-                            background: isSelected
-                              ? "linear-gradient(135deg, #2d7a5a, #48A680)"
-                              : "rgba(30,30,30,0.8)",
-                            color: isSelected ? "#fff" : "#c0c0c0",
-                            border: isSelected
-                              ? "1px solid rgba(72,166,128,0.5)"
-                              : "1px solid rgba(255,255,255,0.08)",
-                            borderRadius: 999,
-                            padding: isSelected ? "10px 22px" : "10px 22px",
-                            fontSize: 14, fontWeight: 500,
-                            cursor: "pointer",
-                            transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
-                            fontFamily: "'DM Sans', sans-serif",
-                            display: "inline-flex", alignItems: "center", gap: 7,
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {isSelected && (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                          <span>{lang.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                ))}
+              {/* Muted speaker icon — top left */}
+              <div style={{
+                position: "absolute", top: 14, left: 14,
+                color: "#48A680", opacity: 0.8,
+              }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                  <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
               </div>
             </div>
+          </div>
 
-            {/* RIGHT — Video Preview */}
-            <div style={{ padding: "0 40px 0 0" }}>
-              <div style={{
-                width: "100%", maxWidth: 420,
-                aspectRatio: "16/14",
-                position: "relative",
-                background: "#000", borderRadius: 16,
-                border: "1px solid rgba(255,255,255,0.06)",
-                overflow: "hidden",
-                boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
-              }}>
-                {/* Video */}
-                <video
-                  ref={videoRef}
-                  autoPlay muted loop playsInline preload="auto"
-                  style={{
-                    width: "100%", height: "100%", objectFit: "cover",
-                    opacity: videoOpacity,
-                    transition: "opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
-                    display: "block",
-                  }}
-                >
-                  <source src={currentSrc} type="video/mp4" />
-                </video>
+          {/* Language Picker — bottom */}
+          <div style={{ padding: "36px 32px 40px" }}>
+            <h2 style={{
+              fontSize: 24, fontWeight: 700, letterSpacing: "-0.5px",
+              marginBottom: 28, textAlign: "center",
+              fontFamily: "'DM Sans', sans-serif",
+            }}>
+              Select your Language
+            </h2>
 
-                {/* Muted speaker icon — top right */}
-                <div style={{
-                  position: "absolute", top: 14, right: 14,
-                  color: "#48A680", opacity: 0.8,
-                }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                    <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
+            {/* Language pills in rows */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
+              {rows.map((row, ri) => (
+                <div key={ri} style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+                  {row.map((lang) => {
+                    const idx = languages.indexOf(lang);
+                    const isSelected = selectedIdx === idx;
+                    return (
+                      <button
+                        key={lang.name}
+                        onClick={() => setSelectedIdx(idx)}
+                        className="lang-pill"
+                        style={{
+                          background: isSelected
+                            ? "linear-gradient(135deg, #2d7a5a, #48A680)"
+                            : "rgba(30,30,30,0.8)",
+                          color: isSelected ? "#fff" : "#c0c0c0",
+                          border: isSelected
+                            ? "1px solid rgba(72,166,128,0.5)"
+                            : "1px solid rgba(255,255,255,0.08)",
+                          borderRadius: 999,
+                          padding: "10px 20px",
+                          fontSize: 14, fontWeight: 500,
+                          cursor: "pointer",
+                          transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+                          fontFamily: "'DM Sans', sans-serif",
+                          display: "inline-flex", alignItems: "center", gap: 7,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {isSelected && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        )}
+                        <span>{lang.name}</span>
+                      </button>
+                    );
+                  })}
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -473,18 +465,6 @@ function LanguageSection() {
         }
         .lang-pill:active {
           transform: rotate(0deg) scale(0.96) !important;
-        }
-        @media (max-width: 768px) {
-          .lang-section-inner {
-            grid-template-columns: 1fr !important;
-            gap: 32px !important;
-          }
-          .lang-section-inner > div:first-child {
-            padding: 0 24px !important;
-          }
-          .lang-section-inner > div:last-child {
-            padding: 0 24px !important;
-          }
         }
       `}</style>
     </section>
@@ -1448,7 +1428,7 @@ function PricingSection() {
 
   const plans = [
     {
-      name: "Free", type: "free", popular: false,
+      name: "Free", type: "free", slug: null, popular: false,
       monthly: { USD: "0.00", INR: "0.00", PKR: "0.00", BDT: "0.00", NPR: "0.00" },
       yearly: { USD: "0", INR: "0", PKR: "0", BDT: "0", NPR: "0" },
       yearlyStrike: null, save: null,
@@ -1456,7 +1436,7 @@ function PricingSection() {
       features: ["All Languages", "10 Minutes Free Testing\n( Full Templates)", "5 GB Cloud Storage", "Max Video Length 2 min", "3 Audio Enhancement Credits\n(1 Credit = 1 Video)"],
     },
     {
-      name: "Editor Plan", type: "editor", popular: false,
+      name: "Editor Plan", type: "editor", slug: "editor", popular: false,
       monthly: { USD: "6.99", INR: "1,950", PKR: "1,950", BDT: "1,200", NPR: "1,600" },
       yearly: { USD: "4.89", INR: "1,625", PKR: "1,625", BDT: "900", NPR: "1,100" },
       yearlyStrike: { USD: "6.99", INR: "2,333.33", PKR: "1,950", BDT: "1,200", NPR: "1,600" },
@@ -1465,7 +1445,7 @@ function PricingSection() {
       features: ["2 Hours of Transcription", "20 GB Cloud Storage", "1080P Video Render", "Max Video Length 2 min", "50 Audio Enhancement Credits\n(1 Credit = 1 Video)", "Custom Font Upload"],
     },
     {
-      name: "Creator Plan", type: "creator", popular: true,
+      name: "Creator Plan", type: "creator", slug: "creator", popular: false,
       monthly: { USD: "9.99", INR: "2,800", PKR: "2,800", BDT: "1,800", NPR: "2,200" },
       yearly: { USD: "6.66", INR: "2,333.3", PKR: "2,333.3", BDT: "1,350", NPR: "1,650" },
       yearlyStrike: { USD: "9.99", INR: "3,500", PKR: "2,800", BDT: "1,800", NPR: "2,200" },
@@ -1474,7 +1454,7 @@ function PricingSection() {
       features: ["5 Hours of Transcription", "60 GB Cloud Storage", "4K Video Render", "Max Video Length 5 min", "Unlimited Audio Enhancement", "Alpha Channel Render", "SRT Render", "2 Hours of Translation (from\nany Desi Language to English)"],
     },
     {
-      name: "Business Plan", type: "business", popular: false,
+      name: "Business Plan", type: "business", slug: "business", popular: true,
       monthly: { USD: "24.99", INR: "6,999", PKR: "6,999", BDT: "4,500", NPR: "5,500" },
       yearly: { USD: "20.83", INR: "5,832.5", PKR: "5,832.5", BDT: "3,750", NPR: "4,580" },
       yearlyStrike: { USD: "24.99", INR: "9,416.67", PKR: "6,999", BDT: "4,500", NPR: "5,500" },
@@ -1619,7 +1599,7 @@ function PricingSection() {
                 </div>
 
                 {/* CTA */}
-                <a href="#" style={{
+                <a href={plan.slug ? `https://app.kalakar.io/signup?plan=${plan.slug}&interval=${isYearly ? "year" : "month"}` : "https://app.kalakar.io/signup"} target="_blank" rel="noopener noreferrer" style={{
                   display: "block", textAlign: "center", padding: "13px",
                   borderRadius: 12, textDecoration: "none", fontWeight: 600, fontSize: 14,
                   background: plan.popular ? "#48A680" : "transparent",
@@ -1663,9 +1643,9 @@ function PricingSection() {
 // ——— TESTIMONIALS ———
 function TestimonialsSection() {
   const textReviews = [
-    { name: "Aarav", text: "I've been using Kalakaar recently & it's honestly super helpful. It supports multiple languages, generating Hindi captions used to be a real struggle, but with Kalakaar, the process is super smooth." },
-    { name: "Zaryab Khan", text: "If you're an editor or creator from South Asia, this software is your only solution. It's got all the trendy captioning styles available like beast style, Iman Gadzi, Devin Jatho, Alex harmozi etc just one click away." },
-    { name: "Ahsan Imran", text: "Kalakaar as a captioning software is one of the best out there. Its premade templates are really helpful & loading times are really quick. Overall as an editor it makes the captioning much more easier." },
+    { name: "Aarav", text: "If you're an editor or creator from South Asia, this software is your only solution, It's got all the trendy captioning styles available like beast style, Iman Gadzi, Devin Jatho, Alex harmozi etc just one click away." },
+    { name: "Zaryab Khan", text: "Kalakaar as a captioning software is one of the best out there. It's premade templates are really helpful & loading times are really quick. Overall as an editor it makes the captioning much more easier." },
+    { name: "Ahsan Imran", text: "" },
   ];
 
   const [playingVideo, setPlayingVideo] = useState(null);
@@ -1729,16 +1709,28 @@ function TestimonialsSection() {
                 </div>
               )}
             </div>
-            <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid var(--border)" }}>
-              <div style={{
-                width: 40, height: 40, borderRadius: "50%",
-                background: "hsl(150, 40%, 30%)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontWeight: 700, fontSize: 16, color: "#fff",
-              }}>B</div>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>Bhuwan</div>
-                <div style={{ fontSize: 12, color: "var(--text-muted)" }}>• India</div>
+            <div style={{ padding: "16px 20px", borderTop: "1px solid var(--border)" }}>
+              <div style={{ display: "flex", gap: 2, marginBottom: 8 }}>
+                {[...Array(5)].map((_, si) => (
+                  <svg key={si} width="12" height="12" viewBox="0 0 24 24" fill="#f5f5f5" stroke="none">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                ))}
+              </div>
+              <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 12 }}>
+                "I've been using Kalakaar recently & it's honestly super helpful. It supports multiple languages, generating Hindi captions used to be a real struggle, but with Kalakaar, the process is super smooth."
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: "50%",
+                  background: "hsl(150, 40%, 30%)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontWeight: 700, fontSize: 16, color: "#fff",
+                }}>B</div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>Bhuwan</div>
+                  <div style={{ fontSize: 12, color: "var(--text-muted)" }}>• India</div>
+                </div>
               </div>
             </div>
           </div>
@@ -1754,8 +1746,15 @@ function TestimonialsSection() {
               }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(72,166,128,0.4)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; }}>
-                <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 20 }}>{t.text}</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ display: "flex", gap: 2, marginBottom: 12 }}>
+                  {[...Array(5)].map((_, si) => (
+                    <svg key={si} width="14" height="14" viewBox="0 0 24 24" fill="#f5f5f5" stroke="none">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  ))}
+                </div>
+                {t.text && <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 20 }}>{t.text}</p>}
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: "auto" }}>
                   <div style={{
                     width: 40, height: 40, borderRadius: "50%",
                     background: `hsl(${150 + i * 30}, 40%, 30%)`,
@@ -1796,16 +1795,25 @@ function TestimonialsSection() {
                 </div>
               )}
             </div>
-            <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid var(--border)" }}>
-              <div style={{
-                width: 40, height: 40, borderRadius: "50%",
-                background: "hsl(190, 40%, 30%)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontWeight: 700, fontSize: 16, color: "#fff",
-              }}>D</div>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>Danyal</div>
-                <div style={{ fontSize: 12, color: "var(--text-muted)" }}>• Pakistan</div>
+            <div style={{ padding: "16px 20px", borderTop: "1px solid var(--border)" }}>
+              <div style={{ display: "flex", gap: 2, marginBottom: 8 }}>
+                {[...Array(5)].map((_, si) => (
+                  <svg key={si} width="12" height="12" viewBox="0 0 24 24" fill="#f5f5f5" stroke="none">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                ))}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: "50%",
+                  background: "hsl(190, 40%, 30%)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontWeight: 700, fontSize: 16, color: "#fff",
+                }}>D</div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>Danyal</div>
+                  <div style={{ fontSize: 12, color: "var(--text-muted)" }}>• Pakistan</div>
+                </div>
               </div>
             </div>
           </div>
@@ -1867,7 +1875,7 @@ function WhySection() {
   ];
 
   return (
-    <section id="about" style={{ padding: "80px 24px", maxWidth: 860, margin: "0 auto" }}>
+    <section id="why" style={{ padding: "80px 24px", maxWidth: 860, margin: "0 auto" }}>
       <AnimSection>
         <h2 style={{
           fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800,
@@ -1976,14 +1984,19 @@ function Footer() {
           </a>
         </div>
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-          {["Terms & Conditions", "Privacy Policy", "Instagram", "LinkedIn"].map(link => (
-            <a key={link} href="#" style={{
+          {[
+            { label: "Terms & Conditions", href: "https://www.kalakar.io/termsandconditions" },
+            { label: "Privacy Policy", href: "https://www.kalakar.io/privacypolicy" },
+            { label: "Instagram", href: "https://www.instagram.com/kalakar_app/" },
+            { label: "LinkedIn", href: "https://www.linkedin.com/company/kalakarr" },
+          ].map(link => (
+            <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" style={{
               color: "var(--text-muted)", textDecoration: "none",
               fontSize: 13, transition: "color 0.2s",
             }}
               onMouseEnter={e => e.target.style.color = "var(--text-primary)"}
               onMouseLeave={e => e.target.style.color = "var(--text-muted)"}>
-              {link}
+              {link.label}
             </a>
           ))}
         </div>
