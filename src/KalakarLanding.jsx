@@ -680,63 +680,49 @@ function GlobeHeroSection() {
 // ——— TEMPLATES MARQUEE ———
 function TemplatesSection() {
   const templates = [
-    { name: "Devin Jatho", tag: "Fully customizable", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Devin%20Jatho%20(Fully%20customizable).mp4", hue: 20 },
-    { name: "Editing Skool", tag: "Fully customizable", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Editing%20Skool(Fully%20customizable).mp4", hue: 270 },
-    { name: "Mr Beast", tag: "Fully customizable", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Mr%20Beast%20(Fully%20customizable).mp4", hue: 220 },
-    { name: "Ali Abdaal", tag: "Fully customizable", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Ali%20Abdaal%20(Fully%20customizable).mp4", hue: 160 },
-    { name: "Alex Hormozi", tag: "Partially customizable", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Alex%20Hormozi%20(Partially%20customizable).mp4", hue: 40 },
-    { name: "Iman Gadzhi", tag: "Fully customizable", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Iman%20Gadzhi%20(Fully%20customizable).mp4", hue: 330 },
-    { name: "Bubble Style", tag: "Fully customizable", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Bubble%20Style%20(Fully%20customizable).mp4", hue: 190 },
+    { name: "Devin Jatho", tag: "Fully customizable", img: "https://framerusercontent.com/images/ViUEuCGRVgYPqSq8F0UYT3xvwk.png?width=274&height=427" },
+    { name: "Editing Skool", tag: "Fully customizable", img: "https://framerusercontent.com/images/Z9qE4Jj1LUklvFbrpe81skzOiKw.png?width=264&height=428" },
+    { name: "Mr Beast", tag: "Fully customizable", img: "https://framerusercontent.com/images/eZAgB0PS9mH4LOu1ba4RgZratNU.png?width=260&height=432" },
+    { name: "Ali Abdaal", tag: "Fully customizable", img: "https://framerusercontent.com/images/769YZT2otKXGbpYJRC8OStInOI.png?width=262&height=432" },
+    { name: "Alex Hormozi", tag: "Partially customizable", img: "https://framerusercontent.com/images/JkJ0KyIYOf2LPS0bJe6WJ87VWo.png?width=265&height=425" },
+    { name: "Iman Gadzhi", tag: "Fully customizable", img: "https://framerusercontent.com/images/9hchyEyOoRmhIljen2bOehg.png?width=256&height=428" },
+    { name: "Bubble Style", tag: "Fully customizable", img: "https://framerusercontent.com/images/PIjzhFoA55OJlqoevzRCqFzRIs.png?width=264&height=439" },
   ];
 
-  // Duplicate for seamless loop
-  const row1 = [...templates, ...templates, ...templates];
-  const row2 = [...templates.slice().reverse(), ...templates.slice().reverse(), ...templates.slice().reverse()];
+  const row1 = [...templates, ...templates, ...templates, ...templates];
+  const row2 = [...[...templates].reverse(), ...[...templates].reverse(), ...[...templates].reverse(), ...[...templates].reverse()];
 
   const TemplateCard = ({ t }) => (
     <div style={{
-      width: 160, height: 260, flexShrink: 0,
-      borderRadius: 16, overflow: "hidden",
-      background: `linear-gradient(145deg, hsl(${t.hue}, 40%, 12%) 0%, hsl(${t.hue}, 30%, 8%) 100%)`,
-      border: "1px solid rgba(255,255,255,0.06)",
-      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-      gap: 10, padding: 18, cursor: "pointer",
+      width: 170, height: 270, flexShrink: 0,
+      borderRadius: 18, overflow: "hidden",
+      background: "var(--bg-card)",
+      border: "1px solid var(--border)",
+      cursor: "pointer",
       transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
       position: "relative",
     }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; e.currentTarget.style.borderColor = `hsla(${t.hue}, 60%, 50%, 0.3)`; e.currentTarget.style.boxShadow = `0 20px 60px hsla(${t.hue}, 60%, 30%, 0.2)`; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.boxShadow = "none"; }}
+      onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; e.currentTarget.style.borderColor = "rgba(3,255,178,0.25)"; }}
+      onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.borderColor = "var(--border)"; }}
     >
-      {/* Glow accent */}
-      <div style={{
-        position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
-        width: "60%", height: 2,
-        background: `linear-gradient(90deg, transparent, hsla(${t.hue}, 70%, 55%, 0.5), transparent)`,
-      }} />
-      {/* Initial circle */}
-      <div style={{
-        width: 48, height: 48, borderRadius: "50%",
-        background: `linear-gradient(135deg, hsla(${t.hue}, 60%, 45%, 0.3), hsla(${t.hue}, 60%, 35%, 0.15))`,
-        border: `1px solid hsla(${t.hue}, 60%, 50%, 0.2)`,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 20, fontWeight: 800, color: `hsl(${t.hue}, 70%, 70%)`,
-        fontFamily: "var(--font-display)",
-      }}>{t.name[0]}</div>
-      {/* Play icon */}
-      <div style={{
-        width: 28, height: 28, borderRadius: "50%",
-        background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M8 5v14l11-7z"/></svg>
-      </div>
-      {/* Name + tag */}
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontWeight: 700, fontSize: 13, fontFamily: "var(--font-display)", marginBottom: 2 }}>{t.name}</div>
+      <img
+        src={t.img}
+        alt={t.name}
+        loading="lazy"
+        style={{
+          width: "100%", height: 205, objectFit: "cover", display: "block",
+        }}
+        onError={e => { e.target.style.display = "none"; }}
+      />
+      <div style={{ padding: "10px 14px" }}>
         <div style={{
-          fontSize: 11, fontWeight: 500,
-          color: t.tag === "Fully customizable" ? "var(--success)" : "var(--gold)",
-          fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "0.5px",
+          fontWeight: 600, fontSize: 13, color: "var(--text-primary)",
+          fontFamily: "var(--font-display)",
+        }}>{t.name}</div>
+        <div style={{
+          fontSize: 10, fontWeight: 600, marginTop: 3,
+          color: "var(--accent)", textTransform: "uppercase",
+          letterSpacing: "0.5px", fontFamily: "var(--font-display)",
         }}>{t.tag}</div>
       </div>
     </div>
@@ -745,10 +731,10 @@ function TemplatesSection() {
   return (
     <section style={{ padding: "48px 0 48px", overflow: "hidden" }}>
       <AnimSection>
-        <div style={{ textAlign: "center", marginBottom: 28, padding: "0 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 32, padding: "0 24px" }}>
           <p style={{
             fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
-            color: "var(--accent-secondary-light)", marginBottom: 8,
+            color: "var(--accent)", marginBottom: 8,
             fontFamily: "var(--font-display)",
           }}>Templates</p>
           <h2 style={{
@@ -759,27 +745,27 @@ function TemplatesSection() {
             All your Favourite{" "}
             <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--highlight)" }}>Templates</span>
           </h2>
-          <p style={{ color: "var(--text-secondary)", marginTop: 16, fontSize: 16, fontFamily: "var(--font-body)" }}>
+          <p style={{ color: "var(--text-secondary)", marginTop: 14, fontSize: 16, fontFamily: "var(--font-body)" }}>
             Dozens of fully <strong style={{ color: "var(--text-primary)" }}>customizable templates</strong> in all desi languages
           </p>
         </div>
       </AnimSection>
 
-      {/* Marquee Row 1 — scrolling left */}
+      {/* Marquee Row 1 */}
       <div className="marquee-track" style={{ overflow: "hidden", marginBottom: 16 }}>
         <div className="marquee-inner" style={{
           display: "flex", gap: 16, width: "max-content",
-          animation: "marqueeLeft 60s linear infinite",
+          animation: "marqueeLeft 40s linear infinite",
         }}>
           {row1.map((t, i) => <TemplateCard key={`r1-${i}`} t={t} />)}
         </div>
       </div>
 
-      {/* Marquee Row 2 — scrolling right */}
+      {/* Marquee Row 2 */}
       <div className="marquee-track" style={{ overflow: "hidden" }}>
         <div className="marquee-inner" style={{
           display: "flex", gap: 16, width: "max-content",
-          animation: "marqueeRight 60s linear infinite",
+          animation: "marqueeRight 45s linear infinite",
         }}>
           {row2.map((t, i) => <TemplateCard key={`r2-${i}`} t={t} />)}
         </div>
