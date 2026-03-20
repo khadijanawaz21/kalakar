@@ -1668,27 +1668,17 @@ function TestimonialsSection() {
     }
   };
 
-  const StarRow = ({ size = 14 }) => (
-    <div style={{ display: "flex", gap: 2 }}>
-      {[...Array(5)].map((_, i) => (
-        <svg key={i} width={size} height={size} viewBox="0 0 24 24" fill="var(--gold)" stroke="none">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-      ))}
-    </div>
-  );
-
-  const VideoCard = ({ name, location, quote, videoSrc, videoRef: ref, videoKey }) => (
+  const VideoCard = ({ name, location, videoSrc, videoRef: ref, videoKey }) => (
     <div style={{
       background: "var(--bg-card)", borderRadius: 20,
       border: "1px solid rgba(255,255,255,0.06)",
       overflow: "hidden", display: "flex", flexDirection: "column",
-      transition: "all 0.3s",
+      transition: "all 0.3s", height: "100%",
     }}
       onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(3,255,178,0.2)"}
       onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"}
     >
-      <div style={{ flex: 1, position: "relative", minHeight: 200 }}>
+      <div style={{ flex: 1, position: "relative" }}>
         <video
           ref={ref}
           src={videoSrc}
@@ -1699,63 +1689,54 @@ function TestimonialsSection() {
         />
         {playingVideo !== videoKey && (
           <div onClick={() => handlePlay(videoKey)} style={{
-            position: "absolute", bottom: 20, left: 20,
-            width: 52, height: 52, borderRadius: "50%",
+            position: "absolute", bottom: 16, left: 16,
+            width: 44, height: 44, borderRadius: "50%",
             background: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", transition: "all 0.2s",
             boxShadow: "0 4px 20px rgba(3,255,178,0.3)",
           }}
             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
           </div>
         )}
       </div>
-      <div style={{ padding: "18px 22px" }}>
-        <StarRow size={12} />
-        {quote && (
-          <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, margin: "10px 0 14px" }}>
-            "{quote}"
-          </p>
-        )}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: quote ? 0 : 12 }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: "50%",
-            background: "linear-gradient(135deg, var(--accent), var(--accent-light))",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontWeight: 700, fontSize: 14, color: "#fff", fontFamily: "var(--font-display)",
-          }}>{name[0]}</div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: 14, fontFamily: "var(--font-display)" }}>{name}</div>
-            {location && <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{location}</div>}
-          </div>
+      <div style={{ padding: "12px 16px", display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{
+          width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
+          background: "linear-gradient(135deg, var(--accent), var(--accent-light))",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontWeight: 700, fontSize: 13, color: "#fff", fontFamily: "var(--font-display)",
+        }}>{name[0]}</div>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: 13, fontFamily: "var(--font-display)" }}>{name}</div>
+          {location && <div style={{ fontSize: 11, color: "var(--text-muted)" }}>· {location}</div>}
         </div>
       </div>
     </div>
   );
 
-  const TextCard = ({ name, text, style: cardStyle = {} }) => (
+  const TextCard = ({ name, text }) => (
     <div style={{
       background: "var(--bg-card)", borderRadius: 20,
       border: "1px solid rgba(255,255,255,0.06)",
-      padding: 20, display: "flex", flexDirection: "column", justifyContent: "space-between",
-      transition: "all 0.3s", ...cardStyle,
+      padding: "18px 20px", display: "flex", flexDirection: "column", justifyContent: "space-between",
+      transition: "all 0.3s", height: "100%",
     }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(3,255,178,0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.transform = "none"; }}
     >
       <div>
-        <StarRow />
-        {text && <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginTop: 10 }}>{text}</p>}
+        <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, margin: 0 }}>{text}</p>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 20 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14 }}>
         <div style={{
-          width: 40, height: 40, borderRadius: "50%",
+          width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
           background: "linear-gradient(135deg, var(--accent-secondary), var(--accent-secondary-light))",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontWeight: 700, fontSize: 16, color: "#fff", fontFamily: "var(--font-display)",
+          fontWeight: 700, fontSize: 14, color: "#fff", fontFamily: "var(--font-display)",
         }}>{name[0]}</div>
-        <div style={{ fontWeight: 700, fontSize: 14, fontFamily: "var(--font-display)" }}>{name}</div>
+        <div style={{ fontWeight: 700, fontSize: 13, fontFamily: "var(--font-display)" }}>{name}</div>
       </div>
     </div>
   );
@@ -1783,15 +1764,15 @@ function TestimonialsSection() {
       <AnimSection delay="delay-1">
         <div className="testimonials-grid" style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1.2fr 1fr",
-          gridTemplateRows: "auto auto",
-          gap: 20, maxWidth: 1200, margin: "0 auto",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gridTemplateRows: "1fr 1fr",
+          gap: 16, maxWidth: 1100, margin: "0 auto",
+          height: "clamp(480px, 60vh, 600px)",
         }}>
           {/* Left — Bhuwan Video (spans 2 rows) */}
           <div style={{ gridRow: "1 / 3" }}>
             <VideoCard
               name="Bhuwan" location="India"
-              quote="I've been using Kalakaar recently & it's honestly super helpful. It supports multiple languages, generating Hindi captions used to be a real struggle, but with Kalakaar, the process is super smooth."
               videoSrc="https://kalakar-cdn.b-cdn.net/Testimonials/Bhuwan%20-%20India.mp4"
               videoRef={bhuwanRef} videoKey="bhuwan"
             />
@@ -1800,7 +1781,7 @@ function TestimonialsSection() {
           {/* Center top — Aarav text */}
           <TextCard
             name="Aarav"
-            text="If you're an editor or creator from South Asia, this software is your only solution. It's got all the trendy captioning styles available like beast style, Iman Gadzi, Devin Jatho, Alex Harmozi etc just one click away."
+            text="I've been using Kalakaar recently & it's honestly super helpful. It supports multiple languages, generating Hindi captions used to be a real struggle, but with Kalakaar, the process is super smooth."
           />
 
           {/* Right — Danyal Video (spans 2 rows) */}
