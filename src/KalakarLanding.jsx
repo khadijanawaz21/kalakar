@@ -182,7 +182,7 @@ function Navbar() {
         }}>
           {/* Logo */}
           <a href="#" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-            <img src="/kalakar-logo.svg" alt="Kalakar" style={{ height: 24 }} />
+            <img src="/kalakar-logo-full.svg" alt="Kalakar" style={{ height: 24 }} />
           </a>
 
           {/* Desktop links */}
@@ -1802,7 +1802,7 @@ function Footer() {
         {/* Left — logo + support */}
         <div>
           <div style={{ marginBottom: 16 }}>
-            <img src="/kalakar-logo.svg" alt="Kalakar" style={{ height: 20 }} />
+            <img src="/kalakar-logo-full.svg" alt="Kalakar" style={{ height: 20 }} />
           </div>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 12, maxWidth: 300 }}>
             Still have a query? Drop your questions at our Support Email
