@@ -975,14 +975,10 @@ function ExportSection() {
     return () => clearTimeout(timer);
   }, [step, inView]);
 
-  // Step descriptions
-  const stepLabels = [
-    "Export video from your NLE",
-    "Uploading to Kalakar...",
-    "Generating captions with AI",
-    "Rendering SRT & Alpha Channel",
-    "Import back into your NLE",
-  ];
+  // Step descriptions mapped to cards: card1 = steps 0,4  card2 = steps 1,2,3  card3 = step 4
+  const card1Labels = { 0: "Export video from your NLE", 4: "Import back into your NLE" };
+  const card2Labels = { 1: "Uploading to Kalakar...", 2: "Generating captions with AI", 3: "Rendering SRT & Alpha Channel" };
+  const card3Labels = { 4: "Import back into your NLE" };
 
   return (
     <section ref={sectionRef} style={{ padding: "48px 24px", maxWidth: 1200, margin: "0 auto" }}>
@@ -1073,6 +1069,18 @@ function ExportSection() {
                 <polyline points="14 2 14 8 20 8" />
               </svg>
             </div>
+            {/* Active step label */}
+            <div style={{
+              minHeight: 20, marginTop: 8,
+              opacity: card1Labels[step] ? 1 : 0,
+              transform: card1Labels[step] ? "translateY(0)" : "translateY(6px)",
+              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}>
+              <p style={{
+                fontSize: 12, fontWeight: 600, color: "var(--accent)",
+                fontFamily: "var(--font-display)", textAlign: "center",
+              }}>{card1Labels[step] || ""}</p>
+            </div>
           </div>
 
           {/* Card 2: Kalakar */}
@@ -1130,6 +1138,18 @@ function ExportSection() {
 
             {/* Empty space when badges hidden */}
             {step !== 3 && <div style={{ height: 60 }} />}
+            {/* Active step label */}
+            <div style={{
+              minHeight: 20, marginTop: 8,
+              opacity: card2Labels[step] ? 1 : 0,
+              transform: card2Labels[step] ? "translateY(0)" : "translateY(6px)",
+              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}>
+              <p style={{
+                fontSize: 12, fontWeight: 600, color: "var(--accent)",
+                fontFamily: "var(--font-display)", textAlign: "center",
+              }}>{card2Labels[step] || ""}</p>
+            </div>
           </div>
 
           {/* Card 3: Back in NLE */}
@@ -1171,31 +1191,34 @@ function ExportSection() {
               }}>Alpha Channel</div>
             </div>
             {step !== 4 && <div style={{ height: 52 }} />}
+            {/* Active step label */}
+            <div style={{
+              minHeight: 20, marginTop: 8,
+              opacity: card3Labels[step] ? 1 : 0,
+              transform: card3Labels[step] ? "translateY(0)" : "translateY(6px)",
+              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}>
+              <p style={{
+                fontSize: 12, fontWeight: 600, color: "var(--accent)",
+                fontFamily: "var(--font-display)", textAlign: "center",
+              }}>{card3Labels[step] || ""}</p>
+            </div>
           </div>
         </div>
       </AnimSection>
 
-      {/* Step label */}
+      {/* Step dots */}
       <div style={{
-        textAlign: "center", marginTop: 24,
-        display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+        textAlign: "center", marginTop: 20,
+        display: "flex", justifyContent: "center", gap: 6,
       }}>
-        <div style={{ display: "flex", gap: 6 }}>
-          {[0, 1, 2, 3, 4].map(i => (
-            <div key={i} style={{
-              width: i === step ? 20 : 6, height: 6, borderRadius: 3,
-              background: i === step ? "var(--accent)" : "rgba(255,255,255,0.1)",
-              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-            }} />
-          ))}
-        </div>
-        <p key={step} style={{
-          fontSize: 14, fontWeight: 600, color: "var(--highlight)",
-          fontFamily: "var(--font-display)",
-          animation: "fadeIn 0.3s ease",
-        }}>
-          {stepLabels[step]}
-        </p>
+        {[0, 1, 2, 3, 4].map(i => (
+          <div key={i} style={{
+            width: i === step ? 20 : 6, height: 6, borderRadius: 3,
+            background: i === step ? "var(--accent)" : "rgba(255,255,255,0.1)",
+            transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+          }} />
+        ))}
       </div>
 
       <style>{`
