@@ -107,12 +107,13 @@ const globalStyles = `
     .testimonials-grid { grid-template-columns: 1fr !important; max-width: 480px !important; margin: 0 auto !important; }
     .audio-pills { flex-wrap: wrap !important; }
     .hero-headline { font-size: clamp(32px, 8vw, 40px) !important; }
-    .lang-grid { grid-template-columns: 1fr !important; }
-    .lang-grid .lang-video { order: -1 !important; }
-    .lang-grid .lang-video > div { max-width: 100% !important; border-radius: 0 !important; aspect-ratio: 9/10 !important; border: none !important; box-shadow: none !important; }
-    .lang-grid .lang-video { padding: 0 !important; }
-    .lang-grid .lang-picker { padding: 20px 16px 24px !important; }
-    .lang-grid .lang-picker h2 { font-size: 20px !important; margin-bottom: 14px !important; }
+    .globe-lang-ui { right: 50% !important; transform: translate(50%, -50%) !important; top: auto !important; bottom: 10% !important; }
+    .globe-hero-content h1 { font-size: clamp(26px, 7vw, 36px) !important; }
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(45deg); }
+    50% { transform: translateY(4px) rotate(45deg); }
   }
 `;
 
@@ -266,231 +267,372 @@ function Navbar() {
   );
 }
 
-// ——— HERO ———
-function Hero() {
+// ——— GLOBE HERO + LANGUAGE SELECTOR ———
+const globeLanguages = [
+  { id: "Pushto", native: "پښتو", font: "'Noto Nastaliq Urdu', serif", lat: 34.5, lon: 71.5, sz: 12 },
+  { id: "Urdu", native: "اردو", font: "'Noto Nastaliq Urdu', serif", lat: 30.0, lon: 68.0, sz: 16 },
+  { id: "Punjabi", native: "ਪੰਜਾਬੀ", font: "'Noto Sans Gurmukhi', sans-serif", lat: 31.5, lon: 74.8, sz: 11 },
+  { id: "Sindhi", native: "سنڌي", font: "'Noto Nastaliq Urdu', serif", lat: 26.0, lon: 68.5, sz: 11 },
+  { id: "Hindi", native: "हिन्दी", font: "'Noto Sans Devanagari', sans-serif", lat: 26.8, lon: 80.5, sz: 16 },
+  { id: "Nepali", native: "नेपाली", font: "'Noto Sans Devanagari', sans-serif", lat: 28.2, lon: 85.3, sz: 11 },
+  { id: "Gujarati", native: "ગુજરાતી", font: "'Noto Sans Gujarati', sans-serif", lat: 22.5, lon: 71.5, sz: 11 },
+  { id: "Marathi", native: "मराठी", font: "'Noto Sans Devanagari', sans-serif", lat: 19.0, lon: 75.5, sz: 11 },
+  { id: "Bengali", native: "বাংলা", font: "'Noto Sans Bengali', sans-serif", lat: 24.0, lon: 90.0, sz: 13 },
+  { id: "Telugu", native: "తెలుగు", font: "'Noto Sans Telugu', sans-serif", lat: 17.0, lon: 79.5, sz: 11 },
+  { id: "Kannada", native: "ಕನ್ನಡ", font: "'Noto Sans Kannada', sans-serif", lat: 14.5, lon: 75.5, sz: 11 },
+  { id: "Tamil", native: "தமிழ்", font: "'Noto Sans Tamil', sans-serif", lat: 11.0, lon: 79.0, sz: 12 },
+  { id: "Malayalam", native: "മലയാളം", font: "'Noto Sans Malayalam', sans-serif", lat: 10.0, lon: 76.3, sz: 10 },
+  { id: "Malay", native: "Melayu", font: "system-ui, sans-serif", lat: 3.5, lon: 101.5, sz: 10 },
+  { id: "English", native: "English", font: "system-ui, sans-serif", lat: 34.0, lon: 62.0, sz: 10 },
+];
+
+function GlobeHeroSection() {
+  const canvasRef = useRef(null);
+  const trackRef = useRef(null);
+  const projectionRef = useRef(null);
+  const landDataRef = useRef(null);
+  const [selected, setSelected] = useState(null);
+  const [phoneContent, setPhoneContent] = useState(null);
+  const heroRef = useRef(null);
+  const langUIRef = useRef(null);
+  const scrollHintRef = useRef(null);
+  const rafRef = useRef(null);
+
+  // Fetch world atlas data
+  useEffect(() => {
+    fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+      .then(r => r.json())
+      .then(w => { landDataRef.current = topojson.feature(w, w.objects.countries); });
+  }, []);
+
+  // Setup canvas and animation loop
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+
+    const projection = d3.geoOrthographic().clipAngle(90);
+    projectionRef.current = projection;
+    const geoPath = d3.geoPath(projection, ctx);
+
+    function resize() {
+      const frame = canvas.parentElement;
+      const W = frame.clientWidth;
+      const H = frame.clientHeight;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width = W + "px";
+      canvas.style.height = H + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function ease(t) { return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1; }
+
+    function getP() {
+      const track = trackRef.current;
+      if (!track) return 0;
+      const r = track.getBoundingClientRect();
+      return Math.max(0, Math.min(1, -r.top / (r.height - window.innerHeight)));
+    }
+
+    function draw() {
+      const frame = canvas.parentElement;
+      const W = frame.clientWidth;
+      const H = frame.clientHeight;
+      const p = getP();
+      const z = ease(Math.max(0, Math.min(1, (p - 0.3) / 0.45)));
+      const heroFade = 1 - Math.min(1, p / 0.2);
+      const labelsIn = Math.max(0, Math.min(1, (p - 0.6) / 0.12));
+
+      const s0 = Math.min(W, H) * 0.28;
+      const s1 = Math.min(W, H) * 1.5;
+      const scale = lerp(s0, s1, z);
+      const rx = lerp(-25, -76, z);
+      const ry = lerp(-8, -22, z);
+      const cx = lerp(W * 0.5, W * 0.55, z);
+      const cy = lerp(H * 0.48, H * 0.5, z);
+
+      projection.rotate([rx, ry, 0]).scale(scale).translate([cx, cy]);
+      ctx.clearRect(0, 0, W, H);
+
+      // Sphere
+      ctx.beginPath();
+      geoPath({ type: "Sphere" });
+      ctx.fillStyle = `rgba(3,255,178,${lerp(0.01, 0.005, z)})`;
+      ctx.strokeStyle = `rgba(3,255,178,${lerp(0.06, 0.03, z)})`;
+      ctx.lineWidth = lerp(1, 0.5, z);
+      ctx.fill();
+      ctx.stroke();
+
+      // Graticule
+      if (z < 0.85) {
+        ctx.beginPath();
+        geoPath(d3.geoGraticule10());
+        ctx.strokeStyle = `rgba(3,255,178,${0.02 * (1 - z)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+
+      // Land
+      if (landDataRef.current) {
+        ctx.beginPath();
+        geoPath(landDataRef.current);
+        ctx.fillStyle = `rgba(3,255,178,${lerp(0.03, 0.06, z)})`;
+        ctx.strokeStyle = `rgba(3,255,178,${lerp(0.08, 0.18, z)})`;
+        ctx.lineWidth = lerp(0.3, 0.6, z);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // Language labels
+      const ls = lerp(0.5, 1, z);
+      globeLanguages.forEach((l, i) => {
+        const co = [l.lon, l.lat];
+        const dist = d3.geoDistance(co, [-projection.rotate()[0], -projection.rotate()[1]]);
+        if (dist > Math.PI / 2) return;
+        const pt = projection(co);
+        if (!pt) return;
+        const vis = Math.max(0, 1 - dist / (Math.PI / 2));
+        if (labelsIn <= 0) return;
+
+        const isOn = selected === l.id;
+        const br = 0.35 + 0.2 * Math.sin(Date.now() / 1500 + i * 0.7);
+        const alpha = (isOn ? 1 : br) * vis * labelsIn;
+        const fs = Math.round((l.sz || 12) * ls);
+
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, alpha);
+        ctx.font = (isOn ? "600 " : "400 ") + fs + "px " + l.font;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        if (isOn) {
+          ctx.shadowColor = "rgba(3,255,178,0.7)";
+          ctx.shadowBlur = 24;
+          ctx.fillStyle = "#03ffb2";
+        } else {
+          ctx.fillStyle = "rgba(255,255,255,0.9)";
+        }
+        ctx.fillText(l.native, pt[0], pt[1]);
+        ctx.shadowBlur = 0;
+
+        if (isOn) {
+          ctx.globalAlpha = 0.5 * vis * labelsIn;
+          ctx.font = "10px system-ui";
+          ctx.fillStyle = "#aaa";
+          ctx.fillText(l.id, pt[0], pt[1] + fs * 0.8 + 8);
+        }
+        ctx.restore();
+      });
+
+      // UI transitions
+      if (heroRef.current) {
+        heroRef.current.style.opacity = heroFade;
+        heroRef.current.style.transform = `translate(-50%,-50%) translateY(${-p * 50}px) scale(${lerp(1, 0.96, p)})`;
+      }
+      if (scrollHintRef.current) {
+        scrollHintRef.current.style.opacity = heroFade * 0.5;
+      }
+      if (langUIRef.current) {
+        if (labelsIn > 0.2) {
+          langUIRef.current.style.opacity = Math.min(1, (labelsIn - 0.2) / 0.4);
+          langUIRef.current.style.pointerEvents = "auto";
+        } else {
+          langUIRef.current.style.opacity = 0;
+          langUIRef.current.style.pointerEvents = "none";
+        }
+      }
+
+      rafRef.current = requestAnimationFrame(draw);
+    }
+
+    rafRef.current = requestAnimationFrame(draw);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [selected]);
+
+  // Canvas click handler
+  const handleCanvasClick = useCallback((e) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const r = track.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, -r.top / (r.height - window.innerHeight)));
+    if (p < 0.5) return;
+
+    const canvas = canvasRef.current;
+    const cr = canvas.getBoundingClientRect();
+    const mx = e.clientX - cr.left;
+    const my = e.clientY - cr.top;
+    const projection = projectionRef.current;
+    if (!projection) return;
+
+    let closest = null;
+    let closestDist = 40;
+    globeLanguages.forEach(l => {
+      const co = [l.lon, l.lat];
+      const dist = d3.geoDistance(co, [-projection.rotate()[0], -projection.rotate()[1]]);
+      if (dist > Math.PI / 2) return;
+      const pt = projection(co);
+      if (!pt) return;
+      const dd = Math.hypot(pt[0] - mx, pt[1] - my);
+      if (dd < closestDist) { closestDist = dd; closest = l; }
+    });
+
+    if (closest) {
+      setSelected(closest.id);
+      setPhoneContent(closest);
+    }
+  }, []);
+
   return (
-    <section style={{ paddingTop: 110, paddingBottom: 48, textAlign: "center", position: "relative", overflow: "hidden" }}>
-      {/* Radial saffron glow */}
-      <div style={{
-        position: "absolute", top: "15%", left: "50%", transform: "translateX(-50%)",
-        width: 1000, height: 700, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(3,255,178,0.08) 0%, rgba(72,255,204,0.03) 40%, transparent 70%)",
-        pointerEvents: "none",
-      }} />
-      {/* Subtle secondary violet glow */}
-      <div style={{
-        position: "absolute", top: "30%", left: "30%", transform: "translateX(-50%)",
-        width: 500, height: 400, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(124,58,237,0.04) 0%, transparent 60%)",
-        pointerEvents: "none",
-      }} />
+    <div ref={trackRef} style={{ height: "300vh", position: "relative" }}>
+      <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
+        {/* Canvas */}
+        <canvas
+          ref={canvasRef}
+          onClick={handleCanvasClick}
+          style={{ position: "absolute", inset: 0, zIndex: 1, cursor: "pointer" }}
+        />
 
-      <div style={{ position: "relative", maxWidth: 900, margin: "0 auto", padding: "0 24px" }}>
-        {/* Headline — staggered line reveal */}
-        <h1 className="hero-headline" style={{
-          fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 800, lineHeight: 1.1,
-          letterSpacing: "-2px", marginBottom: 20,
-          fontFamily: "var(--font-display)",
-        }}>
-          <span style={{ display: "block", animation: "fadeInUp 0.7s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both" }}>
-            <span style={{ color: "var(--highlight)" }}>Captioning</span> Software,
-          </span>
-          <span style={{ display: "block", animation: "fadeInUp 0.7s 0.25s cubic-bezier(0.16, 1, 0.3, 1) both" }}>
-            Made by Desi Creators,
-          </span>
-          <span style={{
-            display: "block",
-            animation: "fadeInUp 0.7s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both",
-            fontFamily: "var(--font-accent)", fontStyle: "italic",
-            color: "var(--highlight)",
-          }}>
-            For Desi Creators
-          </span>
-        </h1>
-
-        <p style={{
-          fontSize: "clamp(15px, 1.8vw, 18px)", color: "var(--text-secondary)", maxWidth: 560,
-          margin: "0 auto 28px", lineHeight: 1.6,
-          animation: "fadeInUp 0.7s 0.55s cubic-bezier(0.16, 1, 0.3, 1) both",
-          fontFamily: "var(--font-body)",
-        }}>
-          Auto-generate accurate captions in all major{" "}
-          <strong style={{ color: "var(--text-primary)", fontWeight: 600 }}>desi languages</strong> in seconds
-        </p>
-
-        <div style={{ animation: "fadeInUp 0.7s 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" }}>
-          <a href="#pricing" style={{
-            background: "var(--accent)", color: "#0a0a0a", padding: "14px 36px",
-            borderRadius: 999, textDecoration: "none", fontSize: 16, fontWeight: 700,
-            transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-            boxShadow: "0 0 30px rgba(3,255,178,0.3), 0 0 80px rgba(3,255,178,0.1)",
-            display: "inline-flex", alignItems: "center", gap: 10,
+        {/* Hero content */}
+        <div
+          ref={heroRef}
+          className="globe-hero-content"
+          style={{
+            position: "absolute", zIndex: 2, top: "50%", left: "50%",
+            transform: "translate(-50%,-50%)", textAlign: "center",
+            pointerEvents: "none", width: "90%", maxWidth: 720,
+          }}
+        >
+          <h1 style={{
+            fontSize: "clamp(30px, 5vw, 62px)", fontWeight: 800, lineHeight: 1.12,
+            letterSpacing: "-2px", color: "#fff",
             fontFamily: "var(--font-display)",
+          }}>
+            <span style={{ color: "var(--highlight)" }}>Captioning</span> Software,<br />
+            Made by Desi Creators,<br />
+            <span style={{
+              fontFamily: "var(--font-accent)", fontStyle: "italic",
+              fontWeight: 400, color: "var(--highlight)",
+            }}>For Desi Creators</span>
+          </h1>
+          <p style={{
+            color: "var(--text-secondary)", fontSize: "clamp(14px, 1.5vw, 18px)",
+            marginTop: 18, lineHeight: 1.6, fontFamily: "var(--font-body)",
+          }}>
+            Auto-generate accurate captions in all major{" "}
+            <strong style={{ color: "rgba(255,255,255,0.7)" }}>desi languages</strong> in seconds
+          </p>
+          <a href="#pricing" style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            marginTop: 28, background: "var(--accent)", color: "#0a0a0a",
+            padding: "14px 32px", borderRadius: 999, textDecoration: "none",
+            fontSize: 15, fontWeight: 600, pointerEvents: "auto",
+            transition: "all 0.3s", fontFamily: "var(--font-display)",
+            boxShadow: "0 0 30px rgba(3,255,178,0.3), 0 0 80px rgba(3,255,178,0.1)",
           }}
             onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = "0 0 40px rgba(3,255,178,0.45), 0 0 100px rgba(3,255,178,0.15)"; }}
             onMouseLeave={e => { e.target.style.transform = "none"; e.target.style.boxShadow = "0 0 30px rgba(3,255,178,0.3), 0 0 80px rgba(3,255,178,0.1)"; }}>
             Get started now
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 12L12 4M12 4H6M12 4V10" />
             </svg>
           </a>
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            gap: 8, marginTop: 20, color: "var(--text-muted)", fontSize: 13,
+          }}>
+            <span style={{ color: "var(--gold)", fontSize: 14, letterSpacing: 1 }}>★★★★★</span>
+            Trusted by over 30,000 Users · 4.9
+          </div>
         </div>
 
-        {/* Trust indicators */}
-        <div style={{ animation: "fadeIn 1s 0.9s ease both", marginTop: 28 }}>
-          <p style={{
-            fontSize: 14, color: "var(--text-secondary)", fontWeight: 500, marginBottom: 12,
+        {/* Language UI (phone mockup) */}
+        <div
+          ref={langUIRef}
+          className="globe-lang-ui"
+          style={{
+            position: "absolute", zIndex: 3, opacity: 0, pointerEvents: "none",
+            transition: "opacity 0.2s", right: "5%", top: "50%",
+            transform: "translateY(-50%)", display: "flex", flexDirection: "column",
+            alignItems: "center", gap: 10,
+          }}
+        >
+          <div style={{
+            fontSize: 10, letterSpacing: 3, color: "var(--accent)",
+            textTransform: "uppercase", marginBottom: 4,
             fontFamily: "var(--font-display)",
+          }}>Select your language</div>
+          {/* Phone frame */}
+          <div style={{
+            width: 155, height: 280, border: "2px solid #2a2a2e",
+            borderRadius: 22, overflow: "hidden",
+            background: "rgba(14,14,16,0.92)", backdropFilter: "blur(12px)",
+            position: "relative", display: "flex", alignItems: "center",
+            justifyContent: "center",
           }}>
-            Trusted by over 30,000 Users
-          </p>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-            <div style={{ display: "flex", gap: 2 }}>
-              {[...Array(5)].map((_, i) => (
-                <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-              ))}
-            </div>
-            <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", fontFamily: "var(--font-display)" }}>4.9</span>
+            {/* Notch */}
+            <div style={{
+              position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
+              width: 52, height: 10, background: "var(--bg-primary)",
+              borderRadius: "0 0 8px 8px", zIndex: 2,
+            }} />
+            {phoneContent ? (
+              <div style={{ textAlign: "center" }}>
+                <div style={{
+                  fontSize: 9, color: "var(--accent)", marginBottom: 2,
+                  letterSpacing: 1, fontFamily: "var(--font-display)",
+                }}>{phoneContent.id.toUpperCase()}</div>
+                <video
+                  key={phoneContent.id}
+                  width="128" height="228"
+                  autoPlay muted loop playsInline
+                  style={{ borderRadius: 8, objectFit: "cover", background: "#000" }}
+                  src={`https://kalakar-cdn.b-cdn.net/Captioned%20Languages/One%20Standard/${phoneContent.id}.mp4`}
+                  onError={e => { e.target.outerHTML = '<div style="color:#555;font-size:11px;padding:14px">Preview unavailable</div>'; }}
+                />
+              </div>
+            ) : (
+              <div style={{ color: "#444", fontSize: 11, textAlign: "center", padding: 14 }}>
+                <div style={{ fontSize: 24, marginBottom: 4, opacity: 0.4 }}>▶</div>
+                Tap a language<br />on the globe
+              </div>
+            )}
           </div>
+          {/* Selected name */}
+          <div style={{ color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", marginTop: 6 }}>
+            {phoneContent ? phoneContent.native : "—"}
+          </div>
+          <div style={{ color: "var(--text-muted)", fontSize: 10, textAlign: "center" }}>
+            {phoneContent ? phoneContent.id : "on the globe"}
+          </div>
+        </div>
+
+        {/* Scroll hint */}
+        <div ref={scrollHintRef} style={{
+          position: "absolute", bottom: 20, left: "50%", transform: "translateX(-50%)",
+          zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+        }}>
+          <span style={{
+            color: "rgba(255,255,255,0.2)", fontSize: 9, letterSpacing: 2,
+            textTransform: "uppercase", fontFamily: "var(--font-display)",
+          }}>Scroll</span>
+          <div style={{
+            width: 14, height: 14,
+            borderRight: "1.5px solid rgba(255,255,255,0.25)",
+            borderBottom: "1.5px solid rgba(255,255,255,0.25)",
+            transform: "rotate(45deg)", animation: "bob 1.5s ease-in-out infinite",
+          }} />
         </div>
       </div>
-    </section>
-  );
-}
-
-// ——— LANGUAGE SELECTOR WITH VIDEOS ———
-function LanguageSection() {
-  const languages = [
-    "Hindi", "English", "Nepali", "Urdu", "Tamil", "Malayalam", "Gujarati", "Bengali",
-    "Punjabi", "Telugu", "Sindhi", "Marathi", "Kannada", "Pushto", "Malay",
-  ];
-
-  const getVideoUrl = (lang) => `https://kalakar-cdn.b-cdn.net/Captioned%20Languages/One%20Standard/${lang}.mp4`;
-
-  const [selectedIdx, setSelectedIdx] = useState(0);
-  const [videoOpacity, setVideoOpacity] = useState(1);
-  const [currentSrc, setCurrentSrc] = useState(getVideoUrl(languages[0]));
-  const videoRef = useRef(null);
-  const targetSrc = getVideoUrl(languages[selectedIdx]);
-
-  useEffect(() => {
-    if (targetSrc === currentSrc) return;
-    setVideoOpacity(0);
-    const t = setTimeout(() => setCurrentSrc(targetSrc), 280);
-    return () => clearTimeout(t);
-  }, [targetSrc, currentSrc]);
-
-  useEffect(() => {
-    if (!videoRef.current) return;
-    videoRef.current.load();
-    videoRef.current.play().catch(() => {});
-    const t = setTimeout(() => setVideoOpacity(1), 100);
-    return () => clearTimeout(t);
-  }, [currentSrc]);
-
-  return (
-    <section style={{ padding: "0 24px 48px", maxWidth: 1100, margin: "0 auto" }}>
-      <AnimSection>
-        <div style={{
-          background: "rgba(20,20,20,0.6)",
-          border: "1px solid rgba(255,255,255,0.06)",
-          borderRadius: 24, overflow: "hidden",
-        }}>
-          <div className="lang-grid" style={{
-            display: "grid", gridTemplateColumns: "1fr 1fr",
-            alignItems: "center",
-          }}>
-            {/* Video Preview */}
-            <div className="lang-video" style={{ padding: "24px 24px 24px 32px", display: "flex", justifyContent: "center" }}>
-              {/* Phone mockup frame */}
-              <div style={{
-                width: "100%", maxWidth: 240,
-                position: "relative",
-                background: "#1a1a1a",
-                borderRadius: 36,
-                padding: "12px 10px",
-                boxShadow: "0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08)",
-              }}>
-                {/* Notch */}
-                <div style={{
-                  position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)",
-                  width: 80, height: 6, borderRadius: 3, background: "#2a2a2a", zIndex: 2,
-                }} />
-                {/* Screen */}
-                <div style={{
-                  width: "100%", aspectRatio: "9/16",
-                  borderRadius: 26, overflow: "hidden",
-                  background: "#000",
-                }}>
-                  <video
-                    ref={videoRef}
-                    autoPlay muted loop playsInline preload="auto"
-                    style={{
-                      width: "100%", height: "100%", objectFit: "cover",
-                      opacity: videoOpacity,
-                      transition: "opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
-                      display: "block",
-                    }}
-                  >
-                    <source src={currentSrc} type="video/mp4" />
-                  </video>
-                </div>
-              </div>
-            </div>
-
-            {/* Language Picker */}
-            <div className="lang-picker" style={{ padding: "24px 32px 24px 0" }}>
-              <p style={{
-                fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
-                color: "var(--highlight)", marginBottom: 12,
-                fontFamily: "var(--font-display)",
-              }}>Languages</p>
-              <h2 style={{
-                fontSize: "clamp(22px, 2.5vw, 30px)", fontWeight: 700, letterSpacing: "-0.5px",
-                marginBottom: 20,
-                fontFamily: "var(--font-display)",
-              }}>
-                Select your Language
-              </h2>
-
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {languages.map((lang, idx) => {
-                  const isSelected = selectedIdx === idx;
-                  return (
-                    <button
-                      key={lang}
-                      onClick={() => setSelectedIdx(idx)}
-                      style={{
-                        background: isSelected
-                          ? "linear-gradient(135deg, var(--accent), var(--accent-light))"
-                          : "rgba(255,255,255,0.04)",
-                        color: isSelected ? "#fff" : "var(--text-secondary)",
-                        border: isSelected
-                          ? "1px solid rgba(3,255,178,0.5)"
-                          : "1px solid rgba(255,255,255,0.08)",
-                        borderRadius: 999,
-                        padding: "8px 16px",
-                        fontSize: 13, fontWeight: 500,
-                        cursor: "pointer",
-                        transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
-                        fontFamily: "var(--font-display)",
-                        whiteSpace: "nowrap",
-                      }}
-                      onMouseEnter={e => { if (!isSelected) { e.currentTarget.style.borderColor = "rgba(3,255,178,0.3)"; e.currentTarget.style.color = "var(--text-primary)"; } }}
-                      onMouseLeave={e => { if (!isSelected) { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "var(--text-secondary)"; } }}
-                    >
-                      {lang}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      </AnimSection>
-    </section>
+    </div>
   );
 }
 
@@ -1873,8 +2015,7 @@ export default function KalakarLanding() {
     <>
       <style>{globalStyles}</style>
       <Navbar />
-      <Hero />
-      <LanguageSection />
+      <GlobeHeroSection />
       <TemplatesSection />
       <AccuracyBanner />
       <ExportSection />
