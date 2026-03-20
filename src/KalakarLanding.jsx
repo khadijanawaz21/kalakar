@@ -291,12 +291,16 @@ function GlobeHeroSection() {
   const trackRef = useRef(null);
   const projectionRef = useRef(null);
   const landDataRef = useRef(null);
-  const [selected, setSelected] = useState(null);
-  const [phoneContent, setPhoneContent] = useState(null);
+  const selectedRef = useRef(null);
+  const [selectedLang, setSelectedLang] = useState(null);
+  const [videoFailed, setVideoFailed] = useState(false);
   const heroRef = useRef(null);
   const langUIRef = useRef(null);
   const scrollHintRef = useRef(null);
   const rafRef = useRef(null);
+
+  // Keep ref in sync with state for the rAF loop
+  useEffect(() => { selectedRef.current = selectedLang?.id || null; }, [selectedLang]);
 
   // Fetch world atlas data
   useEffect(() => {
@@ -305,7 +309,7 @@ function GlobeHeroSection() {
       .then(w => { landDataRef.current = topojson.feature(w, w.objects.countries); });
   }, []);
 
-  // Setup canvas and animation loop
+  // Setup canvas and animation loop — runs once, reads selectedRef inside rAF
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -359,50 +363,50 @@ function GlobeHeroSection() {
       projection.rotate([rx, ry, 0]).scale(scale).translate([cx, cy]);
       ctx.clearRect(0, 0, W, H);
 
-      // Sphere
+      // Sphere — subtle outline for 3D cue
       ctx.beginPath();
       geoPath({ type: "Sphere" });
-      ctx.fillStyle = `rgba(3,255,178,${lerp(0.01, 0.005, z)})`;
-      ctx.strokeStyle = `rgba(3,255,178,${lerp(0.06, 0.03, z)})`;
-      ctx.lineWidth = lerp(1, 0.5, z);
+      ctx.fillStyle = "rgba(255,255,255,0.012)";
+      ctx.strokeStyle = "rgba(255,255,255,0.06)";
+      ctx.lineWidth = 1;
       ctx.fill();
       ctx.stroke();
 
-      // Graticule
+      // Graticule — fades during zoom
       if (z < 0.85) {
         ctx.beginPath();
         geoPath(d3.geoGraticule10());
-        ctx.strokeStyle = `rgba(3,255,178,${0.02 * (1 - z)})`;
+        ctx.strokeStyle = `rgba(255,255,255,${0.025 * (1 - z)})`;
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
 
-      // Land
+      // Land — ghostly outlines, not solid fills
       if (landDataRef.current) {
         ctx.beginPath();
         geoPath(landDataRef.current);
-        ctx.fillStyle = `rgba(3,255,178,${lerp(0.03, 0.06, z)})`;
-        ctx.strokeStyle = `rgba(3,255,178,${lerp(0.08, 0.18, z)})`;
-        ctx.lineWidth = lerp(0.3, 0.6, z);
+        ctx.fillStyle = `rgba(255,255,255,${(0.03 + 0.03 * z).toFixed(3)})`;
+        ctx.strokeStyle = `rgba(255,255,255,${(0.08 + 0.07 * z).toFixed(3)})`;
+        ctx.lineWidth = 0.3 + 0.2 * z;
         ctx.fill();
         ctx.stroke();
       }
 
-      // Language labels
-      const ls = lerp(0.5, 1, z);
+      // Language labels — prominent, readable
+      const currentSelected = selectedRef.current;
       globeLanguages.forEach((l, i) => {
         const co = [l.lon, l.lat];
-        const dist = d3.geoDistance(co, [-projection.rotate()[0], -projection.rotate()[1]]);
-        if (dist > Math.PI / 2) return;
+        const angularDist = d3.geoDistance(co, [-projection.rotate()[0], -projection.rotate()[1]]);
+        if (angularDist > Math.PI / 2) return;
         const pt = projection(co);
         if (!pt) return;
-        const vis = Math.max(0, 1 - dist / (Math.PI / 2));
+        const edgeFade = Math.max(0, 1 - angularDist / (Math.PI / 2));
         if (labelsIn <= 0) return;
 
-        const isOn = selected === l.id;
-        const br = 0.35 + 0.2 * Math.sin(Date.now() / 1500 + i * 0.7);
-        const alpha = (isOn ? 1 : br) * vis * labelsIn;
-        const fs = Math.round((l.sz || 12) * ls);
+        const isOn = currentSelected === l.id;
+        const breathe = 0.5 + 0.15 * Math.sin(Date.now() / 1500 + i * 0.7);
+        const alpha = (isOn ? 1.0 : breathe) * edgeFade * labelsIn;
+        const fs = Math.round((l.sz || 12) * (1 + 0.8 * z));
 
         ctx.save();
         ctx.globalAlpha = Math.min(1, alpha);
@@ -411,8 +415,8 @@ function GlobeHeroSection() {
         ctx.textBaseline = "middle";
 
         if (isOn) {
-          ctx.shadowColor = "rgba(3,255,178,0.7)";
-          ctx.shadowBlur = 24;
+          ctx.shadowColor = "rgba(3,255,178,0.6)";
+          ctx.shadowBlur = 22;
           ctx.fillStyle = "#03ffb2";
         } else {
           ctx.fillStyle = "rgba(255,255,255,0.9)";
@@ -421,10 +425,10 @@ function GlobeHeroSection() {
         ctx.shadowBlur = 0;
 
         if (isOn) {
-          ctx.globalAlpha = 0.5 * vis * labelsIn;
-          ctx.font = "10px system-ui";
-          ctx.fillStyle = "#aaa";
-          ctx.fillText(l.id, pt[0], pt[1] + fs * 0.8 + 8);
+          ctx.globalAlpha = 0.6 * edgeFade * labelsIn;
+          ctx.font = "11px system-ui";
+          ctx.fillStyle = "#bbb";
+          ctx.fillText(l.id, pt[0], pt[1] + fs * 0.8 + 10);
         }
         ctx.restore();
       });
@@ -456,7 +460,7 @@ function GlobeHeroSection() {
       window.removeEventListener("resize", resize);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [selected]);
+  }, []); // stable — no deps, reads refs
 
   // Canvas click handler
   const handleCanvasClick = useCallback((e) => {
@@ -486,8 +490,8 @@ function GlobeHeroSection() {
     });
 
     if (closest) {
-      setSelected(closest.id);
-      setPhoneContent(closest);
+      setSelectedLang(closest);
+      setVideoFailed(false);
     }
   }, []);
 
@@ -584,21 +588,25 @@ function GlobeHeroSection() {
               width: 52, height: 10, background: "var(--bg-primary)",
               borderRadius: "0 0 8px 8px", zIndex: 2,
             }} />
-            {phoneContent ? (
-              <div style={{ textAlign: "center" }}>
-                <div style={{
-                  fontSize: 9, color: "var(--accent)", marginBottom: 2,
-                  letterSpacing: 1, fontFamily: "var(--font-display)",
-                }}>{phoneContent.id.toUpperCase()}</div>
-                <video
-                  key={phoneContent.id}
-                  width="128" height="228"
-                  autoPlay muted loop playsInline
-                  style={{ borderRadius: 8, objectFit: "cover", background: "#000" }}
-                  src={`https://kalakar-cdn.b-cdn.net/Captioned%20Languages/One%20Standard/${phoneContent.id}.mp4`}
-                  onError={e => { e.target.outerHTML = '<div style="color:#555;font-size:11px;padding:14px">Preview unavailable</div>'; }}
-                />
-              </div>
+            {selectedLang ? (
+              videoFailed ? (
+                <div style={{ color: "#555", fontSize: 11, padding: 14, textAlign: "center" }}>Preview unavailable</div>
+              ) : (
+                <div style={{ textAlign: "center" }}>
+                  <div style={{
+                    fontSize: 9, color: "var(--accent)", marginBottom: 2,
+                    letterSpacing: 1, fontFamily: "var(--font-display)",
+                  }}>{selectedLang.id.toUpperCase()}</div>
+                  <video
+                    key={selectedLang.id}
+                    width="128" height="228"
+                    autoPlay muted loop playsInline
+                    style={{ borderRadius: 8, objectFit: "cover", background: "#000" }}
+                    src={`https://kalakar-cdn.b-cdn.net/Captioned%20Languages/One%20Standard/${selectedLang.id}.mp4`}
+                    onError={() => setVideoFailed(true)}
+                  />
+                </div>
+              )
             ) : (
               <div style={{ color: "#444", fontSize: 11, textAlign: "center", padding: 14 }}>
                 <div style={{ fontSize: 24, marginBottom: 4, opacity: 0.4 }}>▶</div>
@@ -608,10 +616,10 @@ function GlobeHeroSection() {
           </div>
           {/* Selected name */}
           <div style={{ color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", marginTop: 6 }}>
-            {phoneContent ? phoneContent.native : "—"}
+            {selectedLang ? selectedLang.native : "—"}
           </div>
           <div style={{ color: "var(--text-muted)", fontSize: 10, textAlign: "center" }}>
-            {phoneContent ? phoneContent.id : "on the globe"}
+            {selectedLang ? selectedLang.id : "on the globe"}
           </div>
         </div>
 
