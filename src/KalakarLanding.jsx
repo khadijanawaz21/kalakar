@@ -1631,8 +1631,8 @@ function MagicWord({ children, progress, range }) {
   const opacity = useTransform(progress, range, [0, 1]);
   return (
     <span style={{
-      position: "relative", marginTop: 12, marginRight: 6,
-      fontSize: "clamp(18px, 2.8vw, 28px)", fontWeight: 500, lineHeight: 1.8,
+      position: "relative", marginTop: 8, marginRight: 5,
+      fontSize: "clamp(14px, 2.2vw, 24px)", fontWeight: 500, lineHeight: 1.7,
       fontFamily: "var(--font-body)",
     }}>
       <span style={{ opacity: 0.12 }}>{children}</span>
