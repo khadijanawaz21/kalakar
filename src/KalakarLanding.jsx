@@ -667,8 +667,43 @@ function NLELogos({ size = 56 }) {
 
 // ——— EXPORT SECTION ———
 function ExportSection() {
+  const [step, setStep] = useState(0);
+  const [inView, setInView] = useState(false);
+  const sectionRef = useRef(null);
+
+  // Start animation loop when section enters viewport
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect(); } },
+      { threshold: 0.25 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  // Step through the animation: 0→1→2→3→4→(pause)→0
+  useEffect(() => {
+    if (!inView) return;
+    const durations = [1200, 1400, 1200, 1400, 2000]; // ms per step
+    const timer = setTimeout(() => {
+      setStep(s => (s + 1) % 5);
+    }, durations[step]);
+    return () => clearTimeout(timer);
+  }, [step, inView]);
+
+  // Step descriptions
+  const stepLabels = [
+    "Export video from your NLE",
+    "Uploading to Kalakar...",
+    "Generating captions with AI",
+    "Rendering SRT & Alpha Channel",
+    "Import back into your NLE",
+  ];
+
   return (
-    <section style={{ padding: "100px 24px", maxWidth: 1200, margin: "0 auto" }}>
+    <section ref={sectionRef} style={{ padding: "100px 24px", maxWidth: 1200, margin: "0 auto" }}>
       <AnimSection>
         <div className="export-layout" style={{
           display: "grid", gridTemplateColumns: "1fr 1fr",
@@ -726,54 +761,274 @@ function ExportSection() {
             </a>
           </div>
 
-          {/* Visual side — NLE cards */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {/* NLE logos card */}
+          {/* Visual side — Animated pipeline */}
+          <div style={{
+            background: "rgba(16,16,18,0.7)",
+            border: "1px solid rgba(255,255,255,0.06)",
+            borderRadius: 24, padding: "40px 32px",
+            position: "relative", overflow: "hidden", minHeight: 420,
+          }}>
+            {/* Ambient glow that follows the active step */}
             <div style={{
-              background: "rgba(20,20,20,0.6)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              borderRadius: 20, padding: "40px 36px",
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 24,
+              position: "absolute", width: 200, height: 200, borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(3,255,178,0.08), transparent 70%)",
+              transition: "all 1s cubic-bezier(0.16, 1, 0.3, 1)",
+              left: step <= 1 ? "10%" : step === 2 ? "30%" : step === 3 ? "50%" : "70%",
+              top: "30%", pointerEvents: "none", filter: "blur(20px)",
+            }} />
+
+            {/* Three-node pipeline layout */}
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              position: "relative", zIndex: 1, marginBottom: 40,
             }}>
-              <p style={{
-                fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1.5px",
-                color: "var(--text-muted)", fontFamily: "var(--font-display)",
-              }}>Compatible with</p>
-              <NLELogos size={64} />
-              <div style={{ display: "flex", gap: 20 }}>
-                {["Premiere Pro", "Final Cut", "DaVinci"].map(name => (
-                  <span key={name} style={{
-                    fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-display)",
-                    fontWeight: 500,
-                  }}>{name}</span>
-                ))}
+              {/* Node 1: NLE */}
+              <div style={{
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 14,
+                flex: "0 0 auto", width: 120,
+                opacity: inView ? 1 : 0,
+                transform: inView ? "translateY(0)" : "translateY(20px)",
+                transition: "all 0.6s 0.1s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}>
+                <div style={{
+                  width: 72, height: 72, borderRadius: 18,
+                  background: (step === 0 || step === 4) ? "rgba(3,255,178,0.08)" : "rgba(255,255,255,0.03)",
+                  border: (step === 0 || step === 4) ? "1.5px solid rgba(3,255,178,0.25)" : "1.5px solid rgba(255,255,255,0.06)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+                  position: "relative",
+                }}>
+                  <NLELogos size={36} />
+                  {/* Pulse ring on active */}
+                  {(step === 0 || step === 4) && (
+                    <div style={{
+                      position: "absolute", inset: -4, borderRadius: 22,
+                      border: "1px solid rgba(3,255,178,0.2)",
+                      animation: "subtlePulse 1.5s ease infinite",
+                    }} />
+                  )}
+                </div>
+                <span style={{
+                  fontSize: 12, fontWeight: 600, fontFamily: "var(--font-display)",
+                  color: (step === 0 || step === 4) ? "var(--text-primary)" : "var(--text-muted)",
+                  transition: "color 0.4s",
+                }}>Your NLE</span>
+              </div>
+
+              {/* Arrow 1: NLE → Kalakar */}
+              <div style={{
+                flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+                position: "relative", height: 40,
+              }}>
+                {/* Track line */}
+                <div style={{
+                  width: "100%", height: 1,
+                  background: "rgba(255,255,255,0.06)",
+                }} />
+                {/* Animated dot traveling right (step 0→1) */}
+                <div style={{
+                  position: "absolute", width: 8, height: 8, borderRadius: "50%",
+                  background: "var(--accent)",
+                  boxShadow: "0 0 12px rgba(3,255,178,0.5)",
+                  opacity: step === 1 ? 1 : 0,
+                  left: step === 1 ? "85%" : "0%",
+                  transition: step === 1
+                    ? "left 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s"
+                    : "opacity 0.3s",
+                }} />
+                {/* File icon traveling */}
+                <div style={{
+                  position: "absolute",
+                  opacity: step === 1 ? 1 : 0,
+                  left: step === 1 ? "70%" : "-5%",
+                  transition: step === 1
+                    ? "left 1.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s"
+                    : "opacity 0.2s",
+                  top: -10,
+                }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Node 2: Kalakar (center) */}
+              <div style={{
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 14,
+                flex: "0 0 auto", width: 120,
+                opacity: inView ? 1 : 0,
+                transform: inView ? "translateY(0)" : "translateY(20px)",
+                transition: "all 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}>
+                <div style={{
+                  width: 72, height: 72, borderRadius: 18,
+                  background: (step === 2 || step === 3) ? "rgba(3,255,178,0.1)" : "rgba(255,255,255,0.03)",
+                  border: (step === 2 || step === 3) ? "1.5px solid rgba(3,255,178,0.3)" : "1.5px solid rgba(255,255,255,0.06)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+                  position: "relative",
+                }}>
+                  {/* Kalakar K logo */}
+                  <div style={{
+                    width: 36, height: 36, borderRadius: 10,
+                    background: "linear-gradient(135deg, var(--accent), var(--accent-light))",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 18, color: "#0a0a0a",
+                  }}>K</div>
+                  {/* Spinner on processing step */}
+                  {step === 2 && (
+                    <div style={{
+                      position: "absolute", inset: -6, borderRadius: 22,
+                      border: "2px solid transparent",
+                      borderTopColor: "var(--accent)",
+                      animation: "spin 0.8s linear infinite",
+                    }} />
+                  )}
+                  {(step === 2 || step === 3) && (
+                    <div style={{
+                      position: "absolute", inset: -4, borderRadius: 22,
+                      border: "1px solid rgba(3,255,178,0.15)",
+                      animation: "subtlePulse 1.5s ease infinite",
+                    }} />
+                  )}
+                </div>
+                <span style={{
+                  fontSize: 12, fontWeight: 600, fontFamily: "var(--font-display)",
+                  color: (step === 2 || step === 3) ? "var(--accent)" : "var(--text-muted)",
+                  transition: "color 0.4s",
+                }}>Kalakar</span>
+              </div>
+
+              {/* Arrow 2: Kalakar → NLE */}
+              <div style={{
+                flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+                position: "relative", height: 40,
+              }}>
+                <div style={{
+                  width: "100%", height: 1,
+                  background: "rgba(255,255,255,0.06)",
+                }} />
+                {/* Animated dot traveling right (step 4) */}
+                <div style={{
+                  position: "absolute", width: 8, height: 8, borderRadius: "50%",
+                  background: "var(--accent)",
+                  boxShadow: "0 0 12px rgba(3,255,178,0.5)",
+                  opacity: step === 4 ? 1 : 0,
+                  left: step === 4 ? "85%" : "0%",
+                  transition: step === 4
+                    ? "left 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s"
+                    : "opacity 0.3s",
+                }} />
+                {/* Export badges traveling */}
+                <div style={{
+                  position: "absolute", display: "flex", flexDirection: "column", gap: 4,
+                  opacity: step === 4 ? 1 : 0,
+                  left: step === 4 ? "55%" : "-10%",
+                  transition: step === 4
+                    ? "left 1.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s"
+                    : "opacity 0.2s",
+                  top: -16,
+                }}>
+                  <div style={{
+                    padding: "3px 8px", borderRadius: 4, fontSize: 9, fontWeight: 700,
+                    background: "rgba(3,255,178,0.12)", color: "var(--accent)",
+                    fontFamily: "var(--font-display)", whiteSpace: "nowrap",
+                    border: "1px solid rgba(3,255,178,0.2)",
+                  }}>SRT</div>
+                  <div style={{
+                    padding: "3px 8px", borderRadius: 4, fontSize: 9, fontWeight: 700,
+                    background: "rgba(124,58,237,0.12)", color: "var(--accent-secondary-light)",
+                    fontFamily: "var(--font-display)", whiteSpace: "nowrap",
+                    border: "1px solid rgba(124,58,237,0.2)",
+                  }}>ALPHA</div>
+                </div>
+              </div>
+
+              {/* Node 3: Back to NLE */}
+              <div style={{
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 14,
+                flex: "0 0 auto", width: 120,
+                opacity: inView ? 1 : 0,
+                transform: inView ? "translateY(0)" : "translateY(20px)",
+                transition: "all 0.6s 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}>
+                <div style={{
+                  width: 72, height: 72, borderRadius: 18,
+                  background: step === 4 ? "rgba(3,255,178,0.08)" : "rgba(255,255,255,0.03)",
+                  border: step === 4 ? "1.5px solid rgba(3,255,178,0.25)" : "1.5px solid rgba(255,255,255,0.06)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+                  position: "relative",
+                }}>
+                  <NLELogos size={36} />
+                  {step === 4 && (
+                    <div style={{
+                      position: "absolute", inset: -4, borderRadius: 22,
+                      border: "1px solid rgba(3,255,178,0.2)",
+                      animation: "subtlePulse 1.5s ease infinite",
+                    }} />
+                  )}
+                </div>
+                <span style={{
+                  fontSize: 12, fontWeight: 600, fontFamily: "var(--font-display)",
+                  color: step === 4 ? "var(--text-primary)" : "var(--text-muted)",
+                  transition: "color 0.4s",
+                }}>Back in NLE</span>
               </div>
             </div>
 
-            {/* Workflow mini */}
+            {/* Render output — appears at step 3 */}
             <div style={{
-              display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12,
+              display: "flex", justifyContent: "center", gap: 12, marginBottom: 32,
+              opacity: step === 3 ? 1 : 0,
+              transform: step === 3 ? "translateY(0) scale(1)" : "translateY(10px) scale(0.95)",
+              transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
             }}>
-              {[
-                { icon: "↑", label: "Export from NLE", desc: "Upload your video" },
-                { icon: "✦", label: "Generate Captions", desc: "AI-powered accuracy" },
-                { icon: "⚡", label: "Render", desc: "SRT or Alpha Channel" },
-                { icon: "↓", label: "Import Back", desc: "Into your NLE" },
-              ].map((step, i) => (
-                <div key={i} style={{
-                  background: "rgba(20,20,20,0.6)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  borderRadius: 14, padding: "20px 18px",
-                  transition: "all 0.25s",
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(3,255,178,0.2)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
-                >
-                  <span style={{ fontSize: 20, marginBottom: 8, display: "block" }}>{step.icon}</span>
-                  <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "var(--font-display)", marginBottom: 2 }}>{step.label}</div>
-                  <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{step.desc}</div>
-                </div>
-              ))}
+              <div style={{
+                padding: "10px 20px", borderRadius: 10,
+                background: "rgba(3,255,178,0.06)", border: "1px solid rgba(3,255,178,0.2)",
+                fontSize: 13, fontWeight: 600, color: "var(--accent)",
+                fontFamily: "var(--font-display)",
+                display: "flex", alignItems: "center", gap: 8,
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                SRT File
+              </div>
+              <div style={{
+                padding: "10px 20px", borderRadius: 10,
+                background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.2)",
+                fontSize: 13, fontWeight: 600, color: "var(--accent-secondary-light)",
+                fontFamily: "var(--font-display)",
+                display: "flex", alignItems: "center", gap: 8,
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 12h20"/></svg>
+                Alpha Channel
+              </div>
+            </div>
+
+            {/* Step label — animated */}
+            <div style={{
+              textAlign: "center", minHeight: 48,
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+            }}>
+              {/* Progress dots */}
+              <div style={{ display: "flex", gap: 6 }}>
+                {[0, 1, 2, 3, 4].map(i => (
+                  <div key={i} style={{
+                    width: i === step ? 20 : 6, height: 6, borderRadius: 3,
+                    background: i === step ? "var(--accent)" : "rgba(255,255,255,0.1)",
+                    transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                  }} />
+                ))}
+              </div>
+              <p key={step} style={{
+                fontSize: 13, fontWeight: 600, color: "var(--highlight)",
+                fontFamily: "var(--font-display)",
+                animation: "fadeIn 0.3s ease",
+              }}>
+                {stepLabels[step]}
+              </p>
             </div>
           </div>
         </div>
