@@ -950,30 +950,26 @@ function NLELogos({ size = 56 }) {
 // ——— EXPORT SECTION ———
 function ExportSection() {
   const [step, setStep] = useState(0);
-  const [inView, setInView] = useState(false);
   const sectionRef = useRef(null);
 
-  // Start animation loop when section enters viewport
+  // Scroll-driven steps: divide section scroll range into 5 equal parts
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect(); } },
-      { threshold: 0.25 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
+    const onScroll = () => {
+      const rect = el.getBoundingClientRect();
+      const sectionH = rect.height;
+      const viewH = window.innerHeight;
+      // Progress: 0 when section top hits viewport bottom, 1 when section bottom hits viewport top
+      const progress = Math.max(0, Math.min(1, (viewH - rect.top) / (sectionH + viewH)));
+      // Map to 5 steps (0-4), biased so step 0 starts early
+      const newStep = Math.min(4, Math.floor(progress * 5));
+      setStep(newStep);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  // Step through the animation: 0→1→2→3→4→(pause)→0
-  useEffect(() => {
-    if (!inView) return;
-    const durations = [1200, 1400, 1200, 1400, 2000]; // ms per step
-    const timer = setTimeout(() => {
-      setStep(s => (s + 1) % 5);
-    }, durations[step]);
-    return () => clearTimeout(timer);
-  }, [step, inView]);
 
   // Step descriptions mapped to cards: card1 = steps 0,4  card2 = steps 1,2,3  card3 = step 4
   const card1Labels = { 0: "Export video from your NLE", 4: "Import back into your NLE" };
@@ -981,7 +977,7 @@ function ExportSection() {
   const card3Labels = { 4: "Import back into your NLE" };
 
   return (
-    <section ref={sectionRef} style={{ padding: "48px 24px", maxWidth: 1200, margin: "0 auto" }}>
+    <section ref={sectionRef} style={{ padding: "80px 24px 120px", maxWidth: 1200, margin: "0 auto", minHeight: "80vh" }}>
       {/* Heading + description + CTA */}
       <AnimSection>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
