@@ -11,9 +11,10 @@ const globalStyles = `
     --bg-elevated: #141414;
     --bg-card: #111111;
     --bg-card-hover: #1a1a1a;
-    --accent: #FF6B2B;
-    --accent-light: #FF8F4C;
-    --accent-glow: rgba(255,107,43,0.15);
+    --accent: #03ffb2;
+    --accent-light: #48ffcc;
+    --accent-glow: rgba(3,255,178,0.15);
+    --highlight: #48a680;
     --accent-secondary: #7C3AED;
     --accent-secondary-light: #A78BFA;
     --text-primary: #F5F5F5;
@@ -40,7 +41,7 @@ const globalStyles = `
   }
 
   ::selection {
-    background: rgba(255,107,43,0.3);
+    background: rgba(72,166,128,0.3);
     color: #fff;
   }
 
@@ -181,7 +182,7 @@ function Navbar() {
           <a href="#" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
             <div style={{
               width: 32, height: 32, borderRadius: 8,
-              background: "linear-gradient(135deg, #FF6B2B, #FF8F4C)",
+              background: "linear-gradient(135deg, #03ffb2, #48ffcc)",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 16, color: "#fff",
             }}>K</div>
@@ -204,15 +205,15 @@ function Navbar() {
               </a>
             ))}
             <a href="https://app.kalakar.io/signup" target="_blank" rel="noopener noreferrer" style={{
-              background: "var(--accent)", color: "#fff", padding: "10px 24px",
+              background: "var(--accent)", color: "#0a0a0a", padding: "10px 24px",
               borderRadius: 999, textDecoration: "none", fontSize: 14, fontWeight: 600,
               transition: "all 0.3s", border: "none",
               display: "inline-flex", alignItems: "center", gap: 8,
               fontFamily: "var(--font-display)",
-              boxShadow: "0 0 20px rgba(255,107,43,0.25), 0 0 60px rgba(255,107,43,0.08)",
+              boxShadow: "0 0 20px rgba(3,255,178,0.25), 0 0 60px rgba(3,255,178,0.08)",
             }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-1px)"; e.target.style.boxShadow = "0 0 30px rgba(255,107,43,0.4), 0 0 80px rgba(255,107,43,0.12)"; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = "0 0 20px rgba(255,107,43,0.25), 0 0 60px rgba(255,107,43,0.08)"; }}>
+              onMouseEnter={e => { e.target.style.transform = "translateY(-1px)"; e.target.style.boxShadow = "0 0 30px rgba(3,255,178,0.4), 0 0 80px rgba(3,255,178,0.12)"; }}
+              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = "0 0 20px rgba(3,255,178,0.25), 0 0 60px rgba(3,255,178,0.08)"; }}>
               Sign In
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" />
@@ -260,7 +261,7 @@ function Navbar() {
           }}>{t.label}</a>
         ))}
         <a href="https://app.kalakar.io/signup" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} style={{
-          background: "var(--accent)", color: "#fff", padding: "14px 24px",
+          background: "var(--accent)", color: "#0a0a0a", padding: "14px 24px",
           borderRadius: 12, textDecoration: "none", fontSize: 16, fontWeight: 600,
           textAlign: "center", marginTop: 16, fontFamily: "var(--font-display)",
         }}>Sign In</a>
@@ -277,7 +278,7 @@ function Hero() {
       <div style={{
         position: "absolute", top: "15%", left: "50%", transform: "translateX(-50%)",
         width: 1000, height: 700, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,107,43,0.08) 0%, rgba(255,143,76,0.03) 40%, transparent 70%)",
+        background: "radial-gradient(circle, rgba(3,255,178,0.08) 0%, rgba(72,255,204,0.03) 40%, transparent 70%)",
         pointerEvents: "none",
       }} />
       {/* Subtle secondary violet glow */}
@@ -296,7 +297,7 @@ function Hero() {
           fontFamily: "var(--font-display)",
         }}>
           <span style={{ display: "block", animation: "fadeInUp 0.7s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both" }}>
-            <span style={{ color: "var(--accent)" }}>Captioning</span> Software,
+            <span style={{ color: "var(--highlight)" }}>Captioning</span> Software,
           </span>
           <span style={{ display: "block", animation: "fadeInUp 0.7s 0.25s cubic-bezier(0.16, 1, 0.3, 1) both" }}>
             Made by Desi Creators,
@@ -305,7 +306,7 @@ function Hero() {
             display: "block",
             animation: "fadeInUp 0.7s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both",
             fontFamily: "var(--font-accent)", fontStyle: "italic",
-            color: "var(--accent-light)",
+            color: "var(--highlight)",
           }}>
             For Desi Creators
           </span>
@@ -323,15 +324,15 @@ function Hero() {
 
         <div style={{ animation: "fadeInUp 0.7s 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" }}>
           <a href="#pricing" style={{
-            background: "var(--accent)", color: "#fff", padding: "16px 40px",
+            background: "var(--accent)", color: "#0a0a0a", padding: "16px 40px",
             borderRadius: 999, textDecoration: "none", fontSize: 16, fontWeight: 700,
             transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-            boxShadow: "0 0 30px rgba(255,107,43,0.3), 0 0 80px rgba(255,107,43,0.1)",
+            boxShadow: "0 0 30px rgba(3,255,178,0.3), 0 0 80px rgba(3,255,178,0.1)",
             display: "inline-flex", alignItems: "center", gap: 10,
             fontFamily: "var(--font-display)",
           }}
-            onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = "0 0 40px rgba(255,107,43,0.45), 0 0 100px rgba(255,107,43,0.15)"; }}
-            onMouseLeave={e => { e.target.style.transform = "none"; e.target.style.boxShadow = "0 0 30px rgba(255,107,43,0.3), 0 0 80px rgba(255,107,43,0.1)"; }}>
+            onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = "0 0 40px rgba(3,255,178,0.45), 0 0 100px rgba(3,255,178,0.15)"; }}
+            onMouseLeave={e => { e.target.style.transform = "none"; e.target.style.boxShadow = "0 0 30px rgba(3,255,178,0.3), 0 0 80px rgba(3,255,178,0.1)"; }}>
             Get started now
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" />
@@ -447,7 +448,7 @@ function LanguageSection() {
             <div className="lang-picker" style={{ padding: "48px 48px 48px 0" }}>
               <p style={{
                 fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
-                color: "var(--accent)", marginBottom: 12,
+                color: "var(--highlight)", marginBottom: 12,
                 fontFamily: "var(--font-display)",
               }}>Languages</p>
               <h2 style={{
@@ -471,7 +472,7 @@ function LanguageSection() {
                           : "rgba(255,255,255,0.04)",
                         color: isSelected ? "#fff" : "var(--text-secondary)",
                         border: isSelected
-                          ? "1px solid rgba(255,107,43,0.5)"
+                          ? "1px solid rgba(3,255,178,0.5)"
                           : "1px solid rgba(255,255,255,0.08)",
                         borderRadius: 999,
                         padding: "10px 20px",
@@ -481,7 +482,7 @@ function LanguageSection() {
                         fontFamily: "var(--font-display)",
                         whiteSpace: "nowrap",
                       }}
-                      onMouseEnter={e => { if (!isSelected) { e.currentTarget.style.borderColor = "rgba(255,107,43,0.3)"; e.currentTarget.style.color = "var(--text-primary)"; } }}
+                      onMouseEnter={e => { if (!isSelected) { e.currentTarget.style.borderColor = "rgba(3,255,178,0.3)"; e.currentTarget.style.color = "var(--text-primary)"; } }}
                       onMouseLeave={e => { if (!isSelected) { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "var(--text-secondary)"; } }}
                     >
                       {lang}
@@ -577,7 +578,7 @@ function TemplatesSection() {
             fontFamily: "var(--font-display)",
           }}>
             All your Favourite{" "}
-            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--accent)" }}>Templates</span>
+            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--highlight)" }}>Templates</span>
           </h2>
           <p style={{ color: "var(--text-secondary)", marginTop: 16, fontSize: 16, fontFamily: "var(--font-body)" }}>
             Dozens of fully <strong style={{ color: "var(--text-primary)" }}>customizable templates</strong> in all desi languages
@@ -617,7 +618,7 @@ function AccuracyBanner() {
       {/* Subtle diagonal background strip */}
       <div style={{
         position: "absolute", inset: 0,
-        background: "linear-gradient(170deg, transparent 35%, rgba(255,107,43,0.03) 50%, transparent 65%)",
+        background: "linear-gradient(170deg, transparent 35%, rgba(3,255,178,0.03) 50%, transparent 65%)",
         pointerEvents: "none",
       }} />
       <AnimSection>
@@ -626,7 +627,7 @@ function AccuracyBanner() {
             fontSize: "clamp(80px, 12vw, 160px)", fontWeight: 900,
             fontFamily: "var(--font-display)", letterSpacing: "-6px",
             lineHeight: 1,
-            background: "linear-gradient(135deg, var(--accent), var(--accent-light), var(--accent-secondary-light))",
+            background: "linear-gradient(135deg, var(--accent), var(--highlight), var(--accent-secondary-light))",
             backgroundSize: "200% 200%",
             animation: "gradientFlow 6s ease infinite",
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
@@ -686,8 +687,8 @@ function ExportSection() {
               fontFamily: "var(--font-display)",
             }}>
               Export in{" "}
-              <span style={{ color: "var(--accent)" }}>SRT</span> or{" "}
-              <span style={{ color: "var(--accent)" }}>Alpha Channel</span>
+              <span style={{ color: "var(--highlight)" }}>SRT</span> or{" "}
+              <span style={{ color: "var(--highlight)" }}>Alpha Channel</span>
             </h2>
             <p style={{
               color: "var(--text-secondary)", fontSize: 16, lineHeight: 1.8,
@@ -701,22 +702,22 @@ function ExportSection() {
               {["SRT File", "Alpha Channel"].map(label => (
                 <div key={label} style={{
                   padding: "10px 22px", borderRadius: 10,
-                  background: "rgba(255,107,43,0.06)", border: "1px solid rgba(255,107,43,0.15)",
-                  fontSize: 14, fontWeight: 600, color: "var(--accent-light)",
+                  background: "rgba(72,166,128,0.08)", border: "1px solid rgba(72,166,128,0.2)",
+                  fontSize: 14, fontWeight: 600, color: "var(--highlight)",
                   fontFamily: "var(--font-display)",
                 }}>{label}</div>
               ))}
             </div>
 
             <a href="#pricing" style={{
-              background: "var(--accent)", color: "#fff", padding: "14px 32px",
+              background: "var(--accent)", color: "#0a0a0a", padding: "14px 32px",
               borderRadius: 999, textDecoration: "none", fontSize: 15, fontWeight: 700,
               transition: "all 0.3s", fontFamily: "var(--font-display)",
               display: "inline-flex", alignItems: "center", gap: 10,
-              boxShadow: "0 0 20px rgba(255,107,43,0.25)",
+              boxShadow: "0 0 20px rgba(3,255,178,0.25)",
             }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = "0 0 30px rgba(255,107,43,0.4)"; }}
-              onMouseLeave={e => { e.target.style.transform = "none"; e.target.style.boxShadow = "0 0 20px rgba(255,107,43,0.25)"; }}
+              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = "0 0 30px rgba(3,255,178,0.4)"; }}
+              onMouseLeave={e => { e.target.style.transform = "none"; e.target.style.boxShadow = "0 0 20px rgba(3,255,178,0.25)"; }}
             >
               Join now
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -765,7 +766,7 @@ function ExportSection() {
                   borderRadius: 14, padding: "20px 18px",
                   transition: "all 0.25s",
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,107,43,0.2)"; }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(3,255,178,0.2)"; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
                 >
                   <span style={{ fontSize: 20, marginBottom: 8, display: "block" }}>{step.icon}</span>
@@ -831,7 +832,7 @@ function AudioSection() {
             }}>
               State of The Art
               <br />
-              <span style={{ color: "var(--accent)" }}>Audio Enhancement!</span>
+              <span style={{ color: "var(--highlight)" }}>Audio Enhancement!</span>
             </h2>
 
             <p style={{
@@ -902,12 +903,12 @@ function AudioSection() {
               {/* Status badge */}
               <div style={{
                 position: "absolute", top: 16, right: 16,
-                background: enhanced ? "rgba(255,107,43,0.85)" : "rgba(0,0,0,0.6)",
+                background: enhanced ? "rgba(3,255,178,0.85)" : "rgba(0,0,0,0.6)",
                 backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
                 borderRadius: 999, padding: "8px 16px",
                 display: "flex", alignItems: "center", gap: 8,
                 transition: "all 0.4s ease",
-                border: enhanced ? "1px solid rgba(255,107,43,0.5)" : "1px solid rgba(255,255,255,0.1)",
+                border: enhanced ? "1px solid rgba(3,255,178,0.5)" : "1px solid rgba(255,255,255,0.1)",
               }}>
                 <div style={{
                   width: 8, height: 8, borderRadius: "50%",
@@ -1019,7 +1020,7 @@ function PricingSection() {
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <p style={{
             fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
-            color: "var(--accent)", marginBottom: 12, fontFamily: "var(--font-display)",
+            color: "var(--highlight)", marginBottom: 12, fontFamily: "var(--font-display)",
           }}>Pricing</p>
           <h2 style={{
             fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800,
@@ -1027,7 +1028,7 @@ function PricingSection() {
             fontFamily: "var(--font-display)",
           }}>
             Unbeatable Pricing{" "}
-            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--accent-light)" }}>
+            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--highlight)" }}>
               Across Industry
             </span>
           </h2>
@@ -1058,8 +1059,8 @@ function PricingSection() {
             </div>
             <div style={{
               padding: "6px 14px", borderRadius: 999,
-              background: "rgba(255,107,43,0.1)", border: "1px solid rgba(255,107,43,0.2)",
-              fontSize: 12, fontWeight: 700, color: "var(--accent-light)",
+              background: "rgba(72,166,128,0.1)", border: "1px solid rgba(72,166,128,0.25)",
+              fontSize: 12, fontWeight: 700, color: "var(--highlight)",
               fontFamily: "var(--font-display)",
               animation: "subtlePulse 2s ease infinite",
             }}>
@@ -1079,19 +1080,19 @@ function PricingSection() {
             <AnimSection key={plan.name} delay={`delay-${idx + 1}`}>
               <div style={{
                 background: plan.popular
-                  ? "linear-gradient(180deg, rgba(255,107,43,0.04), rgba(20,20,20,0.6))"
+                  ? "linear-gradient(180deg, rgba(3,255,178,0.04), rgba(20,20,20,0.6))"
                   : "rgba(20,20,20,0.6)",
                 borderRadius: 20, padding: "32px 28px",
                 border: plan.popular
-                  ? "1.5px solid rgba(255,107,43,0.3)"
+                  ? "1.5px solid rgba(3,255,178,0.3)"
                   : "1px solid rgba(255,255,255,0.06)",
                 position: "relative", height: "100%",
                 display: "flex", flexDirection: "column",
                 transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
                 transform: plan.popular ? "translateY(-8px)" : "none",
               }}
-                onMouseEnter={e => { e.currentTarget.style.transform = plan.popular ? "translateY(-12px)" : "translateY(-4px)"; e.currentTarget.style.borderColor = plan.popular ? "rgba(255,107,43,0.5)" : "rgba(255,255,255,0.12)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = plan.popular ? "translateY(-8px)" : "none"; e.currentTarget.style.borderColor = plan.popular ? "rgba(255,107,43,0.3)" : "rgba(255,255,255,0.06)"; }}
+                onMouseEnter={e => { e.currentTarget.style.transform = plan.popular ? "translateY(-12px)" : "translateY(-4px)"; e.currentTarget.style.borderColor = plan.popular ? "rgba(3,255,178,0.5)" : "rgba(255,255,255,0.12)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = plan.popular ? "translateY(-8px)" : "none"; e.currentTarget.style.borderColor = plan.popular ? "rgba(3,255,178,0.3)" : "rgba(255,255,255,0.06)"; }}
               >
                 {/* Most Popular badge */}
                 {plan.popular && (
@@ -1099,9 +1100,9 @@ function PricingSection() {
                     position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
                     padding: "5px 16px", borderRadius: 999,
                     background: "linear-gradient(135deg, var(--accent), var(--accent-light))",
-                    fontSize: 11, fontWeight: 700, color: "#fff",
+                    fontSize: 11, fontWeight: 700, color: "#0a0a0a",
                     fontFamily: "var(--font-display)", whiteSpace: "nowrap",
-                    boxShadow: "0 4px 16px rgba(255,107,43,0.3)",
+                    boxShadow: "0 4px 16px rgba(3,255,178,0.3)",
                   }}>Most Popular</div>
                 )}
 
@@ -1154,14 +1155,14 @@ function PricingSection() {
                     borderRadius: 12, textDecoration: "none", fontWeight: 600, fontSize: 14,
                     fontFamily: "var(--font-display)",
                     background: plan.popular ? "var(--accent)" : "transparent",
-                    color: plan.popular ? "#fff" : "var(--text-secondary)",
+                    color: plan.popular ? "#0a0a0a" : "var(--text-secondary)",
                     border: plan.popular ? "none" : "1px solid rgba(255,255,255,0.1)",
                     marginBottom: 28, transition: "all 0.25s",
-                    boxShadow: plan.popular ? "0 4px 20px rgba(255,107,43,0.25)" : "none",
+                    boxShadow: plan.popular ? "0 4px 20px rgba(3,255,178,0.25)" : "none",
                   }}
                   onMouseEnter={e => {
                     if (!plan.popular) { e.target.style.borderColor = "rgba(255,255,255,0.2)"; e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text-primary)"; }
-                    else { e.target.style.background = "#e55a1f"; }
+                    else { e.target.style.background = "#02d99a"; }
                   }}
                   onMouseLeave={e => {
                     if (!plan.popular) { e.target.style.borderColor = "rgba(255,255,255,0.1)"; e.target.style.background = "transparent"; e.target.style.color = "var(--text-secondary)"; }
@@ -1230,7 +1231,7 @@ function TestimonialsSection() {
       overflow: "hidden", display: "flex", flexDirection: "column",
       transition: "all 0.3s",
     }}
-      onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(255,107,43,0.2)"}
+      onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(3,255,178,0.2)"}
       onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"}
     >
       <div style={{ flex: 1, position: "relative", minHeight: 280 }}>
@@ -1248,7 +1249,7 @@ function TestimonialsSection() {
             width: 52, height: 52, borderRadius: "50%",
             background: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", transition: "all 0.2s",
-            boxShadow: "0 4px 20px rgba(255,107,43,0.3)",
+            boxShadow: "0 4px 20px rgba(3,255,178,0.3)",
           }}
             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>
@@ -1286,7 +1287,7 @@ function TestimonialsSection() {
       padding: 28, display: "flex", flexDirection: "column", justifyContent: "space-between",
       transition: "all 0.3s", ...cardStyle,
     }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,107,43,0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(3,255,178,0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.transform = "none"; }}
     >
       <div>
@@ -1318,7 +1319,7 @@ function TestimonialsSection() {
             fontFamily: "var(--font-display)",
           }}>
             Loved by Creators{" "}
-            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--accent)" }}>
+            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--highlight)" }}>
               Across South Asia
             </span>
           </h2>
@@ -1420,7 +1421,7 @@ function WhySection() {
             fontFamily: "var(--font-display)",
           }}>
             Why we Built{" "}
-            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--accent)" }}>
+            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--highlight)" }}>
               Kalakar?
             </span>
           </h2>
@@ -1432,7 +1433,7 @@ function WhySection() {
         background: "rgba(20,20,20,0.4)",
         border: "1px solid rgba(255,255,255,0.04)",
         borderRadius: 24, padding: "48px 40px",
-        borderLeft: "3px solid var(--accent)",
+        borderLeft: "3px solid var(--highlight)",
       }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {paragraphs.map((p, i) => (
@@ -1472,7 +1473,7 @@ function FAQSection() {
             letterSpacing: "-1px", fontFamily: "var(--font-display)",
           }}>
             Frequently Asked{" "}
-            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--accent)" }}>
+            <span style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", color: "var(--highlight)" }}>
               Questions
             </span>
           </h2>
@@ -1485,7 +1486,7 @@ function FAQSection() {
             <div style={{
               background: "rgba(20,20,20,0.6)",
               borderRadius: 14,
-              border: `1px solid ${open === i ? "rgba(255,107,43,0.3)" : "rgba(255,255,255,0.06)"}`,
+              border: `1px solid ${open === i ? "rgba(3,255,178,0.3)" : "rgba(255,255,255,0.06)"}`,
               overflow: "hidden", transition: "all 0.3s",
             }}>
               <button onClick={() => setOpen(open === i ? null : i)} style={{
@@ -1554,7 +1555,7 @@ function Footer() {
             Still have a query? Drop your questions at our Support Email
           </p>
           <a href="mailto:support@kalakar.io" style={{
-            color: "var(--accent)", textDecoration: "none",
+            color: "var(--highlight)", textDecoration: "none",
             fontSize: 14, fontWeight: 600, fontFamily: "var(--font-display)",
           }}>
             support@kalakar.io →
