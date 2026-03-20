@@ -1066,25 +1066,25 @@ function AudioSection() {
   };
 
   return (
-    <section style={{ padding: "48px 24px", maxWidth: 1100, margin: "0 auto" }}>
+    <section style={{ padding: "40px 24px", maxWidth: 1100, margin: "0 auto" }}>
       <AnimSection>
         <div className="audio-card" style={{
           background: "rgba(20,20,20,0.6)",
           border: "1px solid rgba(255,255,255,0.06)",
-          borderRadius: 24, padding: "36px 36px",
-          display: "grid", gridTemplateColumns: "1fr 1fr",
-          gap: 36, alignItems: "center",
+          borderRadius: 20, padding: "28px 28px",
+          display: "grid", gridTemplateColumns: "1.1fr 0.9fr",
+          gap: 28, alignItems: "center",
         }}>
           {/* Text content */}
           <div>
             <p style={{
-              fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
-              color: "var(--accent-secondary-light)", marginBottom: 16,
+              fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
+              color: "var(--accent-secondary-light)", marginBottom: 10,
               fontFamily: "var(--font-display)",
             }}>Audio AI</p>
             <h2 style={{
-              fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 800,
-              letterSpacing: "-1px", lineHeight: 1.15, marginBottom: 16,
+              fontSize: "clamp(20px, 2.5vw, 28px)", fontWeight: 800,
+              letterSpacing: "-0.5px", lineHeight: 1.2, marginBottom: 12,
               fontFamily: "var(--font-display)",
             }}>
               State of The Art
@@ -1093,28 +1093,29 @@ function AudioSection() {
             </h2>
 
             <p style={{
-              color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.7, marginBottom: 20,
+              color: "var(--text-secondary)", fontSize: 13, lineHeight: 1.6, marginBottom: 16,
             }}>
               <strong style={{ color: "var(--text-primary)" }}>Kalakar</strong> offers{" "}
               <strong style={{ color: "var(--text-primary)" }}>Studio Grade Audio Enhancement</strong> using complex{" "}
               Algorithms & AI. Tested for Harsh Traffic, white noise, crowds, hiss or any other Noise Pattern.
             </p>
 
-            <div className="audio-pills" style={{ display: "flex", gap: 12 }}>
+            <div className="audio-pills" style={{ display: "flex", gap: 8, flexWrap: "nowrap" }}>
               {[
                 { icon: "⏱", label: "Works in Seconds" },
                 { icon: "▶", label: "Realtime Playback" },
                 { icon: "✦", label: "Studio Quality" },
               ].map(({ icon, label }) => (
                 <div key={label} style={{
-                  padding: "10px 18px", borderRadius: 999,
+                  padding: "7px 14px", borderRadius: 999,
                   background: "rgba(124,58,237,0.06)",
                   border: "1px solid rgba(124,58,237,0.15)",
-                  fontSize: 13, fontWeight: 500, color: "var(--accent-secondary-light)",
+                  fontSize: 12, fontWeight: 500, color: "var(--accent-secondary-light)",
                   fontFamily: "var(--font-display)",
-                  display: "flex", alignItems: "center", gap: 6,
+                  display: "flex", alignItems: "center", gap: 5,
+                  whiteSpace: "nowrap",
                 }}>
-                  <span style={{ fontSize: 12 }}>{icon}</span> {label}
+                  <span style={{ fontSize: 11 }}>{icon}</span> {label}
                 </div>
               ))}
             </div>
@@ -1123,10 +1124,11 @@ function AudioSection() {
           {/* Video with toggle */}
           <div style={{ position: "relative" }}>
             <div style={{
-              width: "100%", aspectRatio: "3/4",
-              borderRadius: 20, overflow: "hidden",
+              width: "100%", aspectRatio: "4/5",
+              borderRadius: 16, overflow: "hidden",
               border: "1px solid rgba(255,255,255,0.06)",
               position: "relative", background: "#000",
+              maxHeight: 380,
             }}>
               <video
                 ref={rawVideoRef}
