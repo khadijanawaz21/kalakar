@@ -269,10 +269,11 @@ function Navbar() {
 
 // ——— GLOBE HERO + LANGUAGE SELECTOR ———
 const LANG_CDN = "https://kalakar-cdn.b-cdn.net/Captioned%20Languages";
-function langVideoUrl(lang) {
+function langVideoUrl(lang, script) {
   if (lang.id === "English" || lang.id === "Malay") return `${LANG_CDN}/One%20Standard/${lang.id}.mp4`;
   const cdnName = lang.id === "Bengali" ? "Bangali" : lang.id;
-  return `${LANG_CDN}/Native/${cdnName}.mp4`;
+  const folder = script === "roman" ? "Roman" : "Native";
+  return `${LANG_CDN}/${folder}/${cdnName}.mp4`;
 }
 
 const globeLanguages = [
@@ -298,9 +299,11 @@ function GlobeHeroSection() {
   const trackRef = useRef(null);
   const projectionRef = useRef(null);
   const landDataRef = useRef(null);
-  const selectedRef = useRef(null);
-  const [selectedLang, setSelectedLang] = useState(null);
+  const defaultLang = globeLanguages.find(l => l.id === "English");
+  const selectedRef = useRef(defaultLang.id);
+  const [selectedLang, setSelectedLang] = useState(defaultLang);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [scriptMode, setScriptMode] = useState("native"); // "native" or "roman"
   const heroRef = useRef(null);
   const langUIRef = useRef(null);
   const scrollHintRef = useRef(null);
@@ -595,35 +598,51 @@ function GlobeHeroSection() {
               width: 48, height: 8, background: "var(--bg-primary)",
               borderRadius: "0 0 6px 6px", zIndex: 2,
             }} />
-            {selectedLang ? (
-              videoFailed ? (
-                <div style={{ color: "#555", fontSize: 11, padding: 14, textAlign: "center" }}>Preview unavailable</div>
-              ) : (
-                <video
-                  key={selectedLang.id}
-                  autoPlay muted loop playsInline
-                  style={{
-                    width: "100%", height: "100%",
-                    objectFit: "cover", background: "#000",
-                    borderRadius: 18, display: "block",
-                  }}
-                  src={langVideoUrl(selectedLang)}
-                  onError={() => setVideoFailed(true)}
-                />
-              )
+            {videoFailed ? (
+              <div style={{ color: "#555", fontSize: 11, padding: 14, textAlign: "center" }}>Preview unavailable</div>
             ) : (
-              <div style={{ color: "#444", fontSize: 11, textAlign: "center", padding: 14 }}>
-                <div style={{ fontSize: 24, marginBottom: 4, opacity: 0.4 }}>▶</div>
-                Tap a language<br />on the globe
-              </div>
+              <video
+                key={`${selectedLang.id}-${scriptMode}`}
+                autoPlay muted loop playsInline
+                style={{
+                  width: "100%", height: "100%",
+                  objectFit: "cover", background: "#000",
+                  borderRadius: 18, display: "block",
+                }}
+                src={langVideoUrl(selectedLang, scriptMode)}
+                onError={() => setVideoFailed(true)}
+              />
             )}
           </div>
+          {/* Native / Roman toggle — hidden for English & Malay (only one version) */}
+          {selectedLang.id !== "English" && selectedLang.id !== "Malay" && (
+            <div style={{ display: "flex", gap: 4, marginTop: 8 }}>
+              {["native", "roman"].map(mode => {
+                const active = scriptMode === mode;
+                return (
+                  <button
+                    key={mode}
+                    onClick={() => { setScriptMode(mode); setVideoFailed(false); }}
+                    style={{
+                      padding: "5px 14px", borderRadius: 999, border: "none",
+                      fontSize: 10, fontWeight: 600, cursor: "pointer",
+                      textTransform: "uppercase", letterSpacing: 1,
+                      fontFamily: "var(--font-display)",
+                      background: active ? "var(--accent)" : "rgba(255,255,255,0.08)",
+                      color: active ? "#0a0a0a" : "var(--text-secondary)",
+                      transition: "all 0.2s",
+                    }}
+                  >{mode}</button>
+                );
+              })}
+            </div>
+          )}
           {/* Selected name */}
           <div style={{ color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", marginTop: 6 }}>
-            {selectedLang ? selectedLang.native : "—"}
+            {selectedLang.native}
           </div>
           <div style={{ color: "var(--text-muted)", fontSize: 10, textAlign: "center" }}>
-            {selectedLang ? selectedLang.id : "on the globe"}
+            {selectedLang.id}
           </div>
         </div>
 
