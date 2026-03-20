@@ -416,29 +416,32 @@ function GlobeHeroSection() {
         const isOn = currentSelected === l.id;
         const breathe = 0.5 + 0.15 * Math.sin(Date.now() / 1500 + i * 0.7);
         const alpha = (isOn ? 1.0 : breathe) * edgeFade * labelsIn;
-        const fs = Math.round((l.sz || 12) * (1 + 0.8 * z));
+        // Uniform size in English; selected gets slightly larger
+        const fs = isOn ? Math.round(16 * (1 + 0.8 * z)) : Math.round(13 * (1 + 0.6 * z));
 
         ctx.save();
         ctx.globalAlpha = Math.min(1, alpha);
-        ctx.font = (isOn ? "600 " : "400 ") + fs + "px " + l.font;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
         if (isOn) {
+          // Selected: show native script with glow
+          ctx.font = "700 " + fs + "px " + l.font;
           ctx.shadowColor = "rgba(3,255,178,0.6)";
           ctx.shadowBlur = 22;
           ctx.fillStyle = "#03ffb2";
-        } else {
-          ctx.fillStyle = "rgba(255,255,255,0.9)";
-        }
-        ctx.fillText(l.native, pt[0], pt[1]);
-        ctx.shadowBlur = 0;
-
-        if (isOn) {
+          ctx.fillText(l.native, pt[0], pt[1]);
+          ctx.shadowBlur = 0;
+          // English name below
           ctx.globalAlpha = 0.6 * edgeFade * labelsIn;
-          ctx.font = "11px system-ui";
+          ctx.font = "500 11px 'Satoshi', system-ui";
           ctx.fillStyle = "#bbb";
-          ctx.fillText(l.id, pt[0], pt[1] + fs * 0.8 + 10);
+          ctx.fillText(l.id, pt[0], pt[1] + fs * 0.7 + 10);
+        } else {
+          // Idle: clean English label
+          ctx.font = "500 " + fs + "px 'Satoshi', system-ui";
+          ctx.fillStyle = "rgba(255,255,255,0.85)";
+          ctx.fillText(l.id, pt[0], pt[1]);
         }
         ctx.restore();
       });
