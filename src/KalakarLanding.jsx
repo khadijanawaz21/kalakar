@@ -1847,32 +1847,32 @@ function WhySection() {
     "Because Kalakar is built by actual creators and editors, we are very much community centric. We are constantly developing & improving exactly to meet the needs for South Asia and we will keep on developing technologies that would cater to our Market, no more asking for help from Gora Market, we are here!",
   ];
 
-  // Single scroll container drives all paragraphs sequentially
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 0.85", "end 0.3"],
-  });
+  const trackRef = useRef(null);
+  const [activePara, setActivePara] = useState(0);
 
-  // Build a flat list of all words with their global progress ranges
-  const allWords = [];
-  const totalWords = paragraphs.reduce((sum, p) => sum + p.split(" ").length, 0);
-  let wordIndex = 0;
-
-  paragraphs.forEach((p) => {
-    const words = p.split(" ");
-    const paraWords = [];
-    words.forEach((word) => {
-      const start = wordIndex / totalWords;
-      const end = (wordIndex + 1) / totalWords;
-      paraWords.push({ word, start, end });
-      wordIndex++;
-    });
-    allWords.push(paraWords);
-  });
+  // rAF-driven scroll tracking (same pattern as globe/export)
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    let raf;
+    const tick = () => {
+      const rect = el.getBoundingClientRect();
+      const progress = Math.max(0, Math.min(1, -rect.top / (rect.height - window.innerHeight)));
+      const newPara = Math.min(paragraphs.length - 1, Math.floor(progress * paragraphs.length));
+      setActivePara(newPara);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   return (
-    <section id="why" style={{ padding: "48px 24px", maxWidth: 800, margin: "0 auto" }}>
+    <div ref={trackRef} style={{ height: "300vh", position: "relative" }}>
+    <section id="why" style={{
+      position: "sticky", top: 0, height: "100vh",
+      display: "flex", flexDirection: "column", justifyContent: "center",
+      padding: "0 24px", maxWidth: 800, margin: "0 auto",
+    }}>
       <AnimSection>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <h2 style={{
@@ -1889,25 +1889,43 @@ function WhySection() {
       </AnimSection>
 
       {/* Letter-style card */}
-      <div ref={containerRef} style={{
+      <div style={{
         background: "rgba(20,20,20,0.4)",
         border: "1px solid rgba(255,255,255,0.04)",
         borderRadius: 24, padding: "36px 32px",
         borderLeft: "3px solid var(--highlight)",
+        minHeight: 280,
       }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {allWords.map((paraWords, pi) => (
-            <p key={pi} style={{ display: "flex", flexWrap: "wrap", margin: 0 }}>
-              {paraWords.map((w, wi) => (
-                <MagicWord key={wi} progress={scrollYProgress} range={[w.start, w.end]}>
-                  {w.word}
-                </MagicWord>
-              ))}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {paragraphs.map((p, i) => (
+            <p key={i} style={{
+              margin: 0,
+              fontSize: "clamp(13px, 1.4vw, 16px)", fontWeight: 400, lineHeight: 1.8,
+              fontFamily: "var(--font-body)",
+              color: i <= activePara ? "var(--text-primary)" : "rgba(255,255,255,0.1)",
+              transform: i <= activePara ? "translateY(0)" : "translateY(8px)",
+              transition: "color 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}>
+              {p}
             </p>
           ))}
         </div>
       </div>
+
+      {/* Progress dots */}
+      <div style={{
+        display: "flex", justifyContent: "center", gap: 6, marginTop: 20,
+      }}>
+        {paragraphs.map((_, i) => (
+          <div key={i} style={{
+            width: i === activePara ? 20 : 6, height: 6, borderRadius: 3,
+            background: i === activePara ? "var(--accent)" : "rgba(255,255,255,0.1)",
+            transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+          }} />
+        ))}
+      </div>
     </section>
+    </div>
   );
 }
 
