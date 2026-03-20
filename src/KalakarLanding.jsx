@@ -1,10 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
+import * as d3 from "d3";
+import * as topojson from "topojson-client";
 
 // ——— CSS Keyframes & Global Styles ———
 const globalStyles = `
   @import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,600,700,800,900&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Sans+Tamil:wght@400;600&family=Noto+Sans+Malayalam:wght@400;600&family=Noto+Sans+Bengali:wght@400;600&family=Noto+Sans+Gujarati:wght@400;600&family=Noto+Sans+Kannada:wght@400;600&family=Noto+Sans+Telugu:wght@400;600&family=Noto+Sans+Gurmukhi:wght@400;600&display=swap');
 
   :root {
     --bg-primary: #0a0a0a;
@@ -99,8 +101,9 @@ const globalStyles = `
     .mobile-menu-btn { display: flex !important; }
     .pricing-grid { grid-template-columns: 1fr !important; }
     .audio-card { grid-template-columns: 1fr !important; padding: 24px 16px !important; gap: 20px !important; }
-    .export-layout { grid-template-columns: 1fr !important; text-align: center !important; }
+    .export-layout { grid-template-columns: 1fr !important; text-align: center !important; gap: 32px !important; }
     .export-layout .export-text { align-items: center !important; }
+    .export-pipeline { padding: 32px 20px !important; min-height: 380px !important; }
     .testimonials-grid { grid-template-columns: 1fr !important; max-width: 480px !important; margin: 0 auto !important; }
     .audio-pills { flex-wrap: wrap !important; }
     .hero-headline { font-size: clamp(32px, 8vw, 40px) !important; }
@@ -755,11 +758,11 @@ function ExportSection() {
           </div>
 
           {/* Visual side — Animated pipeline */}
-          <div style={{
+          <div className="export-pipeline" style={{
             background: "rgba(16,16,18,0.7)",
             border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: 20, padding: "28px 24px",
-            position: "relative", overflow: "hidden", minHeight: 340,
+            borderRadius: 20, padding: "40px 32px",
+            position: "relative", overflow: "hidden", minHeight: 420,
           }}>
             {/* Ambient glow that follows the active step */}
             <div style={{
@@ -773,7 +776,7 @@ function ExportSection() {
             {/* Three-node pipeline layout */}
             <div style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
-              position: "relative", zIndex: 1, marginBottom: 24,
+              position: "relative", zIndex: 1, marginBottom: 36,
             }}>
               {/* Node 1: NLE */}
               <div style={{
@@ -784,7 +787,7 @@ function ExportSection() {
                 transition: "all 0.6s 0.1s cubic-bezier(0.16, 1, 0.3, 1)",
               }}>
                 <div style={{
-                  width: 56, height: 56, borderRadius: 14,
+                  width: 72, height: 72, borderRadius: 18,
                   background: (step === 0 || step === 4) ? "rgba(3,255,178,0.08)" : "rgba(255,255,255,0.03)",
                   border: (step === 0 || step === 4) ? "1.5px solid rgba(3,255,178,0.25)" : "1.5px solid rgba(255,255,255,0.06)",
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -855,7 +858,7 @@ function ExportSection() {
                 transition: "all 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
               }}>
                 <div style={{
-                  width: 56, height: 56, borderRadius: 14,
+                  width: 72, height: 72, borderRadius: 18,
                   background: (step === 2 || step === 3) ? "rgba(3,255,178,0.1)" : "rgba(255,255,255,0.03)",
                   border: (step === 2 || step === 3) ? "1.5px solid rgba(3,255,178,0.3)" : "1.5px solid rgba(255,255,255,0.06)",
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -947,7 +950,7 @@ function ExportSection() {
                 transition: "all 0.6s 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
               }}>
                 <div style={{
-                  width: 56, height: 56, borderRadius: 14,
+                  width: 72, height: 72, borderRadius: 18,
                   background: step === 4 ? "rgba(3,255,178,0.08)" : "rgba(255,255,255,0.03)",
                   border: step === 4 ? "1.5px solid rgba(3,255,178,0.25)" : "1.5px solid rgba(255,255,255,0.06)",
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -973,7 +976,7 @@ function ExportSection() {
 
             {/* Render output — appears at step 3 */}
             <div style={{
-              display: "flex", justifyContent: "center", gap: 10, marginBottom: 20,
+              display: "flex", justifyContent: "center", gap: 12, marginBottom: 28,
               opacity: step === 3 ? 1 : 0,
               transform: step === 3 ? "translateY(0) scale(1)" : "translateY(10px) scale(0.95)",
               transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
