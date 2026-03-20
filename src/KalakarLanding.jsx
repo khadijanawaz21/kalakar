@@ -447,6 +447,7 @@ function GlobeHeroSection() {
       if (heroRef.current) {
         heroRef.current.style.opacity = heroFade;
         heroRef.current.style.transform = `translate(-50%,-50%) translateY(${-p * 50}px) scale(${lerp(1, 0.96, p)})`;
+        heroRef.current.style.pointerEvents = heroFade > 0.1 ? "auto" : "none";
       }
       if (scrollHintRef.current) {
         scrollHintRef.current.style.opacity = heroFade * 0.5;
