@@ -181,17 +181,8 @@ function Navbar() {
           transition: "all 0.4s ease",
         }}>
           {/* Logo */}
-          <a href="#" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 8,
-              background: "linear-gradient(135deg, #03ffb2, #48ffcc)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 16, color: "#fff",
-            }}>K</div>
-            <span style={{
-              fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18,
-              color: "var(--text-primary)", letterSpacing: "-0.5px",
-            }}>Kalakar</span>
+          <a href="#" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+            <img src="/kalakar-logo.svg" alt="Kalakar" style={{ height: 24 }} />
           </a>
 
           {/* Desktop links */}
@@ -1810,17 +1801,8 @@ function Footer() {
       }}>
         {/* Left — logo + support */}
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-            <div style={{
-              width: 28, height: 28, borderRadius: 7,
-              background: "linear-gradient(135deg, var(--accent), var(--accent-light))",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 14, color: "#fff",
-            }}>K</div>
-            <span style={{
-              fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 16,
-              color: "var(--text-primary)",
-            }}>Kalakar</span>
+          <div style={{ marginBottom: 16 }}>
+            <img src="/kalakar-logo.svg" alt="Kalakar" style={{ height: 20 }} />
           </div>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 12, maxWidth: 300 }}>
             Still have a query? Drop your questions at our Support Email
