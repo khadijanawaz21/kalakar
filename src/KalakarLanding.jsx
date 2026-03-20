@@ -952,20 +952,24 @@ function ExportSection() {
   const [step, setStep] = useState(0);
   const sectionRef = useRef(null);
 
-  // Scroll-driven steps: track how far through the scroll-track we are
+  // Scroll-driven steps with smooth transition (matches globe pattern)
+  const stepRef = useRef(0);
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const onScroll = () => {
+    let raf;
+    const tick = () => {
       const rect = el.getBoundingClientRect();
-      // Progress 0→1 as the scroll-track scrolls through
       const progress = Math.max(0, Math.min(1, -rect.top / (rect.height - window.innerHeight)));
       const newStep = Math.min(4, Math.floor(progress * 5));
-      setStep(newStep);
+      if (newStep !== stepRef.current) {
+        stepRef.current = newStep;
+        setStep(newStep);
+      }
+      raf = requestAnimationFrame(tick);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   // Step descriptions mapped to cards: card1 = steps 0,4  card2 = steps 1,2,3  card3 = step 4
@@ -974,7 +978,7 @@ function ExportSection() {
   const card3Labels = { 4: "Import back into your NLE" };
 
   return (
-    <div ref={sectionRef} style={{ height: "250vh", position: "relative" }}>
+    <div ref={sectionRef} style={{ height: "350vh", position: "relative" }}>
     <section style={{
       position: "sticky", top: 0, height: "100vh",
       display: "flex", flexDirection: "column", justifyContent: "center",
@@ -1039,7 +1043,7 @@ function ExportSection() {
             border: (step === 0 || step === 4) ? "1.5px solid rgba(3,255,178,0.2)" : "1.5px solid rgba(255,255,255,0.06)",
             borderRadius: 20, padding: "32px 24px",
             display: "flex", flexDirection: "column", alignItems: "center",
-            gap: 16, transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+            gap: 16, transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
             position: "relative",
           }}>
             {(step === 0 || step === 4) && (
@@ -1059,7 +1063,7 @@ function ExportSection() {
             </div>
             {/* File icon — visible at step 0 */}
             <div style={{
-              opacity: step === 0 ? 1 : 0, transition: "opacity 0.4s",
+              opacity: step === 0 ? 1 : 0, transition: "opacity 0.8s ease",
               marginTop: 4,
             }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={step === 0 ? "var(--accent)" : "#444"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1072,7 +1076,7 @@ function ExportSection() {
               minHeight: 20, marginTop: 8,
               opacity: card1Labels[step] ? 1 : 0,
               transform: card1Labels[step] ? "translateY(0)" : "translateY(6px)",
-              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
             }}>
               <p style={{
                 fontSize: 12, fontWeight: 600, color: "var(--accent)",
@@ -1087,7 +1091,7 @@ function ExportSection() {
             border: (step >= 1 && step <= 3) ? "1.5px solid rgba(3,255,178,0.25)" : "1.5px solid rgba(255,255,255,0.06)",
             borderRadius: 20, padding: "32px 24px",
             display: "flex", flexDirection: "column", alignItems: "center",
-            gap: 16, transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+            gap: 16, transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
             position: "relative",
           }}>
             {/* Kalakar badge */}
@@ -1107,7 +1111,7 @@ function ExportSection() {
                   <path d="M24 4a20 20 0 0 1 20 20" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               )}
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={(step >= 1 && step <= 3) ? "var(--accent)" : "#444"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.4s" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={(step >= 1 && step <= 3) ? "var(--accent)" : "#444"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.8s" }}>
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
               </svg>
@@ -1118,7 +1122,7 @@ function ExportSection() {
               display: "flex", flexDirection: "column", gap: 6,
               opacity: step === 3 ? 1 : 0,
               transform: step === 3 ? "translateY(0)" : "translateY(8px)",
-              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
             }}>
               <div style={{
                 padding: "6px 14px", borderRadius: 6,
@@ -1141,7 +1145,7 @@ function ExportSection() {
               minHeight: 20, marginTop: 8,
               opacity: card2Labels[step] ? 1 : 0,
               transform: card2Labels[step] ? "translateY(0)" : "translateY(6px)",
-              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
             }}>
               <p style={{
                 fontSize: 12, fontWeight: 600, color: "var(--accent)",
@@ -1156,7 +1160,7 @@ function ExportSection() {
             border: step === 4 ? "1.5px solid rgba(3,255,178,0.2)" : "1.5px solid rgba(255,255,255,0.06)",
             borderRadius: 20, padding: "32px 24px",
             display: "flex", flexDirection: "column", alignItems: "center",
-            gap: 16, transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+            gap: 16, transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
             position: "relative",
           }}>
             {step === 4 && (
@@ -1173,7 +1177,7 @@ function ExportSection() {
             <div style={{
               display: "flex", flexDirection: "column", gap: 5, marginTop: 4,
               opacity: step === 4 ? 1 : 0,
-              transition: "opacity 0.5s",
+              transition: "opacity 0.8s ease",
             }}>
               <div style={{
                 padding: "5px 12px", borderRadius: 6,
@@ -1194,7 +1198,7 @@ function ExportSection() {
               minHeight: 20, marginTop: 8,
               opacity: card3Labels[step] ? 1 : 0,
               transform: card3Labels[step] ? "translateY(0)" : "translateY(6px)",
-              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
             }}>
               <p style={{
                 fontSize: 12, fontWeight: 600, color: "var(--accent)",
