@@ -952,17 +952,14 @@ function ExportSection() {
   const [step, setStep] = useState(0);
   const sectionRef = useRef(null);
 
-  // Scroll-driven steps: divide section scroll range into 5 equal parts
+  // Scroll-driven steps: track how far through the scroll-track we are
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const onScroll = () => {
       const rect = el.getBoundingClientRect();
-      const sectionH = rect.height;
-      const viewH = window.innerHeight;
-      // Progress: 0 when section top hits viewport bottom, 1 when section bottom hits viewport top
-      const progress = Math.max(0, Math.min(1, (viewH - rect.top) / (sectionH + viewH)));
-      // Map to 5 steps (0-4), biased so step 0 starts early
+      // Progress 0→1 as the scroll-track scrolls through
+      const progress = Math.max(0, Math.min(1, -rect.top / (rect.height - window.innerHeight)));
       const newStep = Math.min(4, Math.floor(progress * 5));
       setStep(newStep);
     };
@@ -977,7 +974,12 @@ function ExportSection() {
   const card3Labels = { 4: "Import back into your NLE" };
 
   return (
-    <section ref={sectionRef} style={{ padding: "80px 24px 120px", maxWidth: 1200, margin: "0 auto", minHeight: "80vh" }}>
+    <div ref={sectionRef} style={{ height: "250vh", position: "relative" }}>
+    <section style={{
+      position: "sticky", top: 0, height: "100vh",
+      display: "flex", flexDirection: "column", justifyContent: "center",
+      padding: "0 24px", maxWidth: 1200, margin: "0 auto",
+    }}>
       {/* Heading + description + CTA */}
       <AnimSection>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
@@ -1224,6 +1226,7 @@ function ExportSection() {
         }
       `}</style>
     </section>
+    </div>
   );
 }
 
