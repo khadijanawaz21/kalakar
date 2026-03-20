@@ -98,7 +98,7 @@ const globalStyles = `
     .desktop-nav-links { display: none !important; }
     .mobile-menu-btn { display: flex !important; }
     .pricing-grid { grid-template-columns: 1fr !important; }
-    .audio-card { grid-template-columns: 1fr !important; padding: 32px 20px !important; gap: 32px !important; }
+    .audio-card { grid-template-columns: 1fr !important; padding: 24px 16px !important; gap: 20px !important; }
     .export-layout { grid-template-columns: 1fr !important; text-align: center !important; }
     .export-layout .export-text { align-items: center !important; }
     .testimonials-grid { grid-template-columns: 1fr !important; max-width: 480px !important; margin: 0 auto !important; }
@@ -106,8 +106,10 @@ const globalStyles = `
     .hero-headline { font-size: clamp(32px, 8vw, 40px) !important; }
     .lang-grid { grid-template-columns: 1fr !important; }
     .lang-grid .lang-video { order: -1 !important; }
-    .lang-grid .lang-video > div { max-width: 100% !important; border-radius: 0 !important; aspect-ratio: 9/12 !important; border: none !important; box-shadow: none !important; }
-    .lang-grid .lang-picker { padding: 28px 20px 32px !important; }
+    .lang-grid .lang-video > div { max-width: 100% !important; border-radius: 0 !important; aspect-ratio: 9/10 !important; border: none !important; box-shadow: none !important; }
+    .lang-grid .lang-video { padding: 0 !important; }
+    .lang-grid .lang-picker { padding: 20px 16px 24px !important; }
+    .lang-grid .lang-picker h2 { font-size: 20px !important; margin-bottom: 14px !important; }
   }
 `;
 
@@ -273,7 +275,7 @@ function Navbar() {
 // ——— HERO ———
 function Hero() {
   return (
-    <section style={{ paddingTop: 160, paddingBottom: 100, textAlign: "center", position: "relative", overflow: "hidden" }}>
+    <section style={{ paddingTop: 110, paddingBottom: 48, textAlign: "center", position: "relative", overflow: "hidden" }}>
       {/* Radial saffron glow */}
       <div style={{
         position: "absolute", top: "15%", left: "50%", transform: "translateX(-50%)",
@@ -292,8 +294,8 @@ function Hero() {
       <div style={{ position: "relative", maxWidth: 900, margin: "0 auto", padding: "0 24px" }}>
         {/* Headline — staggered line reveal */}
         <h1 className="hero-headline" style={{
-          fontSize: "clamp(40px, 5.5vw, 72px)", fontWeight: 800, lineHeight: 1.1,
-          letterSpacing: "-2px", marginBottom: 28,
+          fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 800, lineHeight: 1.1,
+          letterSpacing: "-2px", marginBottom: 20,
           fontFamily: "var(--font-display)",
         }}>
           <span style={{ display: "block", animation: "fadeInUp 0.7s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both" }}>
@@ -314,7 +316,7 @@ function Hero() {
 
         <p style={{
           fontSize: "clamp(15px, 1.8vw, 18px)", color: "var(--text-secondary)", maxWidth: 560,
-          margin: "0 auto 40px", lineHeight: 1.7,
+          margin: "0 auto 28px", lineHeight: 1.6,
           animation: "fadeInUp 0.7s 0.55s cubic-bezier(0.16, 1, 0.3, 1) both",
           fontFamily: "var(--font-body)",
         }}>
@@ -324,7 +326,7 @@ function Hero() {
 
         <div style={{ animation: "fadeInUp 0.7s 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" }}>
           <a href="#pricing" style={{
-            background: "var(--accent)", color: "#0a0a0a", padding: "16px 40px",
+            background: "var(--accent)", color: "#0a0a0a", padding: "14px 36px",
             borderRadius: 999, textDecoration: "none", fontSize: 16, fontWeight: 700,
             transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
             boxShadow: "0 0 30px rgba(3,255,178,0.3), 0 0 80px rgba(3,255,178,0.1)",
@@ -341,7 +343,7 @@ function Hero() {
         </div>
 
         {/* Trust indicators */}
-        <div style={{ animation: "fadeIn 1s 0.9s ease both", marginTop: 44 }}>
+        <div style={{ animation: "fadeIn 1s 0.9s ease both", marginTop: 28 }}>
           <p style={{
             fontSize: 14, color: "var(--text-secondary)", fontWeight: 500, marginBottom: 12,
             fontFamily: "var(--font-display)",
@@ -395,7 +397,7 @@ function LanguageSection() {
   }, [currentSrc]);
 
   return (
-    <section style={{ padding: "0 24px 100px", maxWidth: 1100, margin: "0 auto" }}>
+    <section style={{ padding: "0 24px 48px", maxWidth: 1100, margin: "0 auto" }}>
       <AnimSection>
         <div style={{
           background: "rgba(20,20,20,0.6)",
@@ -407,10 +409,10 @@ function LanguageSection() {
             alignItems: "center",
           }}>
             {/* Video Preview */}
-            <div className="lang-video" style={{ padding: 40, display: "flex", justifyContent: "center" }}>
+            <div className="lang-video" style={{ padding: "24px 24px 24px 32px", display: "flex", justifyContent: "center" }}>
               {/* Phone mockup frame */}
               <div style={{
-                width: "100%", maxWidth: 320,
+                width: "100%", maxWidth: 240,
                 position: "relative",
                 background: "#1a1a1a",
                 borderRadius: 36,
@@ -445,21 +447,21 @@ function LanguageSection() {
             </div>
 
             {/* Language Picker */}
-            <div className="lang-picker" style={{ padding: "48px 48px 48px 0" }}>
+            <div className="lang-picker" style={{ padding: "24px 32px 24px 0" }}>
               <p style={{
                 fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
                 color: "var(--highlight)", marginBottom: 12,
                 fontFamily: "var(--font-display)",
               }}>Languages</p>
               <h2 style={{
-                fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 700, letterSpacing: "-0.5px",
-                marginBottom: 32,
+                fontSize: "clamp(22px, 2.5vw, 30px)", fontWeight: 700, letterSpacing: "-0.5px",
+                marginBottom: 20,
                 fontFamily: "var(--font-display)",
               }}>
                 Select your Language
               </h2>
 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {languages.map((lang, idx) => {
                   const isSelected = selectedIdx === idx;
                   return (
@@ -475,8 +477,8 @@ function LanguageSection() {
                           ? "1px solid rgba(3,255,178,0.5)"
                           : "1px solid rgba(255,255,255,0.08)",
                         borderRadius: 999,
-                        padding: "10px 20px",
-                        fontSize: 14, fontWeight: 500,
+                        padding: "8px 16px",
+                        fontSize: 13, fontWeight: 500,
                         cursor: "pointer",
                         transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
                         fontFamily: "var(--font-display)",
@@ -516,12 +518,12 @@ function TemplatesSection() {
 
   const TemplateCard = ({ t }) => (
     <div style={{
-      width: 200, height: 340, flexShrink: 0,
-      borderRadius: 20, overflow: "hidden",
+      width: 160, height: 260, flexShrink: 0,
+      borderRadius: 16, overflow: "hidden",
       background: `linear-gradient(145deg, hsl(${t.hue}, 40%, 12%) 0%, hsl(${t.hue}, 30%, 8%) 100%)`,
       border: "1px solid rgba(255,255,255,0.06)",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-      gap: 16, padding: 24, cursor: "pointer",
+      gap: 10, padding: 18, cursor: "pointer",
       transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
       position: "relative",
     }}
@@ -536,24 +538,24 @@ function TemplatesSection() {
       }} />
       {/* Initial circle */}
       <div style={{
-        width: 64, height: 64, borderRadius: "50%",
+        width: 48, height: 48, borderRadius: "50%",
         background: `linear-gradient(135deg, hsla(${t.hue}, 60%, 45%, 0.3), hsla(${t.hue}, 60%, 35%, 0.15))`,
         border: `1px solid hsla(${t.hue}, 60%, 50%, 0.2)`,
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 24, fontWeight: 800, color: `hsl(${t.hue}, 70%, 70%)`,
+        fontSize: 20, fontWeight: 800, color: `hsl(${t.hue}, 70%, 70%)`,
         fontFamily: "var(--font-display)",
       }}>{t.name[0]}</div>
       {/* Play icon */}
       <div style={{
-        width: 36, height: 36, borderRadius: "50%",
+        width: 28, height: 28, borderRadius: "50%",
         background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)",
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M8 5v14l11-7z"/></svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M8 5v14l11-7z"/></svg>
       </div>
       {/* Name + tag */}
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontWeight: 700, fontSize: 15, fontFamily: "var(--font-display)", marginBottom: 4 }}>{t.name}</div>
+        <div style={{ fontWeight: 700, fontSize: 13, fontFamily: "var(--font-display)", marginBottom: 2 }}>{t.name}</div>
         <div style={{
           fontSize: 11, fontWeight: 500,
           color: t.tag === "Fully customizable" ? "var(--success)" : "var(--gold)",
@@ -564,12 +566,12 @@ function TemplatesSection() {
   );
 
   return (
-    <section style={{ padding: "80px 0 100px", overflow: "hidden" }}>
+    <section style={{ padding: "48px 0 48px", overflow: "hidden" }}>
       <AnimSection>
-        <div style={{ textAlign: "center", marginBottom: 56, padding: "0 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 28, padding: "0 24px" }}>
           <p style={{
-            fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
-            color: "var(--accent-secondary-light)", marginBottom: 12,
+            fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
+            color: "var(--accent-secondary-light)", marginBottom: 8,
             fontFamily: "var(--font-display)",
           }}>Templates</p>
           <h2 style={{
@@ -613,7 +615,7 @@ function TemplatesSection() {
 function AccuracyBanner() {
   return (
     <section style={{
-      padding: "120px 24px", position: "relative", overflow: "hidden",
+      padding: "56px 24px", position: "relative", overflow: "hidden",
     }}>
       {/* Subtle diagonal background strip */}
       <div style={{
@@ -624,7 +626,7 @@ function AccuracyBanner() {
       <AnimSection>
         <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
           <div style={{
-            fontSize: "clamp(80px, 12vw, 160px)", fontWeight: 900,
+            fontSize: "clamp(72px, 10vw, 120px)", fontWeight: 900,
             fontFamily: "var(--font-display)", letterSpacing: "-6px",
             lineHeight: 1,
             background: "linear-gradient(135deg, var(--accent), var(--highlight), var(--accent-secondary-light))",
@@ -703,7 +705,7 @@ function ExportSection() {
   ];
 
   return (
-    <section ref={sectionRef} style={{ padding: "100px 24px", maxWidth: 1200, margin: "0 auto" }}>
+    <section ref={sectionRef} style={{ padding: "48px 24px", maxWidth: 1200, margin: "0 auto" }}>
       <AnimSection>
         <div className="export-layout" style={{
           display: "grid", gridTemplateColumns: "1fr 1fr",
@@ -717,8 +719,8 @@ function ExportSection() {
               fontFamily: "var(--font-display)",
             }}>Pro Export</p>
             <h2 style={{
-              fontSize: "clamp(30px, 4.5vw, 52px)", fontWeight: 800,
-              letterSpacing: "-2px", lineHeight: 1.1, marginBottom: 24,
+              fontSize: "clamp(26px, 4vw, 42px)", fontWeight: 800,
+              letterSpacing: "-1.5px", lineHeight: 1.1, marginBottom: 16,
               fontFamily: "var(--font-display)",
             }}>
               Export in{" "}
@@ -726,14 +728,14 @@ function ExportSection() {
               <span style={{ color: "var(--highlight)" }}>Alpha Channel</span>
             </h2>
             <p style={{
-              color: "var(--text-secondary)", fontSize: 16, lineHeight: 1.8,
-              marginBottom: 36, maxWidth: 480,
+              color: "var(--text-secondary)", fontSize: 15, lineHeight: 1.7,
+              marginBottom: 24, maxWidth: 480,
             }}>
               For all the Pro-Editors, <strong style={{ color: "var(--text-primary)" }}>cross NLE support available</strong> to bring captions back locally in your own software of choice, both as Alpha channel or as an SRT File
             </p>
 
             {/* Format badges */}
-            <div style={{ display: "flex", gap: 12, marginBottom: 36 }}>
+            <div style={{ display: "flex", gap: 10, marginBottom: 24 }}>
               {["SRT File", "Alpha Channel"].map(label => (
                 <div key={label} style={{
                   padding: "10px 22px", borderRadius: 10,
@@ -765,8 +767,8 @@ function ExportSection() {
           <div style={{
             background: "rgba(16,16,18,0.7)",
             border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: 24, padding: "40px 32px",
-            position: "relative", overflow: "hidden", minHeight: 420,
+            borderRadius: 20, padding: "28px 24px",
+            position: "relative", overflow: "hidden", minHeight: 340,
           }}>
             {/* Ambient glow that follows the active step */}
             <div style={{
@@ -780,7 +782,7 @@ function ExportSection() {
             {/* Three-node pipeline layout */}
             <div style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
-              position: "relative", zIndex: 1, marginBottom: 40,
+              position: "relative", zIndex: 1, marginBottom: 24,
             }}>
               {/* Node 1: NLE */}
               <div style={{
@@ -791,7 +793,7 @@ function ExportSection() {
                 transition: "all 0.6s 0.1s cubic-bezier(0.16, 1, 0.3, 1)",
               }}>
                 <div style={{
-                  width: 72, height: 72, borderRadius: 18,
+                  width: 56, height: 56, borderRadius: 14,
                   background: (step === 0 || step === 4) ? "rgba(3,255,178,0.08)" : "rgba(255,255,255,0.03)",
                   border: (step === 0 || step === 4) ? "1.5px solid rgba(3,255,178,0.25)" : "1.5px solid rgba(255,255,255,0.06)",
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -862,7 +864,7 @@ function ExportSection() {
                 transition: "all 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
               }}>
                 <div style={{
-                  width: 72, height: 72, borderRadius: 18,
+                  width: 56, height: 56, borderRadius: 14,
                   background: (step === 2 || step === 3) ? "rgba(3,255,178,0.1)" : "rgba(255,255,255,0.03)",
                   border: (step === 2 || step === 3) ? "1.5px solid rgba(3,255,178,0.3)" : "1.5px solid rgba(255,255,255,0.06)",
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -954,7 +956,7 @@ function ExportSection() {
                 transition: "all 0.6s 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
               }}>
                 <div style={{
-                  width: 72, height: 72, borderRadius: 18,
+                  width: 56, height: 56, borderRadius: 14,
                   background: step === 4 ? "rgba(3,255,178,0.08)" : "rgba(255,255,255,0.03)",
                   border: step === 4 ? "1.5px solid rgba(3,255,178,0.25)" : "1.5px solid rgba(255,255,255,0.06)",
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -980,7 +982,7 @@ function ExportSection() {
 
             {/* Render output — appears at step 3 */}
             <div style={{
-              display: "flex", justifyContent: "center", gap: 12, marginBottom: 32,
+              display: "flex", justifyContent: "center", gap: 10, marginBottom: 20,
               opacity: step === 3 ? 1 : 0,
               transform: step === 3 ? "translateY(0) scale(1)" : "translateY(10px) scale(0.95)",
               transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -1064,14 +1066,14 @@ function AudioSection() {
   };
 
   return (
-    <section style={{ padding: "80px 24px", maxWidth: 1100, margin: "0 auto" }}>
+    <section style={{ padding: "48px 24px", maxWidth: 1100, margin: "0 auto" }}>
       <AnimSection>
         <div className="audio-card" style={{
           background: "rgba(20,20,20,0.6)",
           border: "1px solid rgba(255,255,255,0.06)",
-          borderRadius: 24, padding: "56px 48px",
+          borderRadius: 24, padding: "36px 36px",
           display: "grid", gridTemplateColumns: "1fr 1fr",
-          gap: 48, alignItems: "center",
+          gap: 36, alignItems: "center",
         }}>
           {/* Text content */}
           <div>
@@ -1081,8 +1083,8 @@ function AudioSection() {
               fontFamily: "var(--font-display)",
             }}>Audio AI</p>
             <h2 style={{
-              fontSize: "clamp(28px, 3.5vw, 44px)", fontWeight: 800,
-              letterSpacing: "-1.5px", lineHeight: 1.15, marginBottom: 28,
+              fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 800,
+              letterSpacing: "-1px", lineHeight: 1.15, marginBottom: 16,
               fontFamily: "var(--font-display)",
             }}>
               State of The Art
@@ -1091,7 +1093,7 @@ function AudioSection() {
             </h2>
 
             <p style={{
-              color: "var(--text-secondary)", fontSize: 16, lineHeight: 1.8, marginBottom: 36,
+              color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.7, marginBottom: 20,
             }}>
               <strong style={{ color: "var(--text-primary)" }}>Kalakar</strong> offers{" "}
               <strong style={{ color: "var(--text-primary)" }}>Studio Grade Audio Enhancement</strong> using complex{" "}
@@ -1121,7 +1123,7 @@ function AudioSection() {
           {/* Video with toggle */}
           <div style={{ position: "relative" }}>
             <div style={{
-              width: "100%", aspectRatio: "4/5",
+              width: "100%", aspectRatio: "3/4",
               borderRadius: 20, overflow: "hidden",
               border: "1px solid rgba(255,255,255,0.06)",
               position: "relative", background: "#000",
@@ -1270,16 +1272,16 @@ function PricingSection() {
   };
 
   return (
-    <section id="pricing" style={{ padding: "100px 24px", maxWidth: 1200, margin: "0 auto" }}>
+    <section id="pricing" style={{ padding: "48px 24px", maxWidth: 1200, margin: "0 auto" }}>
       <AnimSection>
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
           <p style={{
-            fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
-            color: "var(--highlight)", marginBottom: 12, fontFamily: "var(--font-display)",
+            fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
+            color: "var(--highlight)", marginBottom: 8, fontFamily: "var(--font-display)",
           }}>Pricing</p>
           <h2 style={{
-            fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800,
-            letterSpacing: "-2px", marginBottom: 24,
+            fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800,
+            letterSpacing: "-1.5px", marginBottom: 16,
             fontFamily: "var(--font-display)",
           }}>
             Unbeatable Pricing{" "}
@@ -1337,7 +1339,7 @@ function PricingSection() {
                 background: plan.popular
                   ? "linear-gradient(180deg, rgba(3,255,178,0.04), rgba(20,20,20,0.6))"
                   : "rgba(20,20,20,0.6)",
-                borderRadius: 20, padding: "32px 28px",
+                borderRadius: 18, padding: "24px 22px",
                 border: plan.popular
                   ? "1.5px solid rgba(3,255,178,0.3)"
                   : "1px solid rgba(255,255,255,0.06)",
@@ -1363,14 +1365,14 @@ function PricingSection() {
 
                 {/* Plan name */}
                 <div style={{
-                  fontSize: 18, fontWeight: 700, color: "var(--text-primary)", marginBottom: 16,
+                  fontSize: 16, fontWeight: 700, color: "var(--text-primary)", marginBottom: 8,
                   fontFamily: "var(--font-display)",
                 }}>{plan.name}</div>
 
                 {/* Price */}
                 <div style={{ marginBottom: 4 }}>
                   <span style={{
-                    fontSize: "clamp(32px, 4vw, 40px)", fontWeight: 800,
+                    fontSize: "clamp(28px, 3.5vw, 34px)", fontWeight: 800,
                     color: "#fff", letterSpacing: "-1px",
                     fontFamily: "var(--font-display)",
                   }}>
@@ -1387,7 +1389,7 @@ function PricingSection() {
                 </div>
 
                 {/* Period */}
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
                   <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
                     / {isYearly ? "month, billed yearly" : "month"}
                   </span>
@@ -1406,13 +1408,13 @@ function PricingSection() {
                   href={plan.slug ? `https://app.kalakar.io/signup?plan=${plan.slug}&interval=${isYearly ? "year" : "month"}` : "https://app.kalakar.io/signup"}
                   target="_blank" rel="noopener noreferrer"
                   style={{
-                    display: "block", textAlign: "center", padding: "14px",
+                    display: "block", textAlign: "center", padding: "11px",
                     borderRadius: 12, textDecoration: "none", fontWeight: 600, fontSize: 14,
                     fontFamily: "var(--font-display)",
                     background: plan.popular ? "var(--accent)" : "transparent",
                     color: plan.popular ? "#0a0a0a" : "var(--text-secondary)",
                     border: plan.popular ? "none" : "1px solid rgba(255,255,255,0.1)",
-                    marginBottom: 28, transition: "all 0.25s",
+                    marginBottom: 16, transition: "all 0.25s",
                     boxShadow: plan.popular ? "0 4px 20px rgba(3,255,178,0.25)" : "none",
                   }}
                   onMouseEnter={e => {
@@ -1426,11 +1428,11 @@ function PricingSection() {
                 >Get Started</a>
 
                 {/* Divider */}
-                <div style={{ height: 1, background: "rgba(255,255,255,0.06)", marginBottom: 24 }} />
+                <div style={{ height: 1, background: "rgba(255,255,255,0.06)", marginBottom: 14 }} />
 
                 {/* Features label */}
                 <div style={{
-                  fontSize: 12, fontWeight: 700, color: "var(--text-muted)", marginBottom: 16,
+                  fontSize: 11, fontWeight: 700, color: "var(--text-muted)", marginBottom: 10,
                   textTransform: "uppercase", letterSpacing: "1px",
                   fontFamily: "var(--font-display)",
                 }}>{plan.featuresLabel}</div>
@@ -1438,11 +1440,11 @@ function PricingSection() {
                 {/* Features list */}
                 <div style={{ flex: 1 }}>
                   {plan.features.map((f, fi) => (
-                    <div key={fi} style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12 }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}>
+                    <div key={fi} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 8 }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}>
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
-                      <span style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>{f}</span>
+                      <span style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.4 }}>{f}</span>
                     </div>
                   ))}
                 </div>
@@ -1489,7 +1491,7 @@ function TestimonialsSection() {
       onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(3,255,178,0.2)"}
       onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"}
     >
-      <div style={{ flex: 1, position: "relative", minHeight: 280 }}>
+      <div style={{ flex: 1, position: "relative", minHeight: 200 }}>
         <video
           ref={ref}
           src={videoSrc}
@@ -1539,7 +1541,7 @@ function TestimonialsSection() {
     <div style={{
       background: "var(--bg-card)", borderRadius: 20,
       border: "1px solid rgba(255,255,255,0.06)",
-      padding: 28, display: "flex", flexDirection: "column", justifyContent: "space-between",
+      padding: 20, display: "flex", flexDirection: "column", justifyContent: "space-between",
       transition: "all 0.3s", ...cardStyle,
     }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(3,255,178,0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
@@ -1547,7 +1549,7 @@ function TestimonialsSection() {
     >
       <div>
         <StarRow />
-        {text && <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.7, marginTop: 14 }}>{text}</p>}
+        {text && <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginTop: 10 }}>{text}</p>}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 20 }}>
         <div style={{
@@ -1562,12 +1564,12 @@ function TestimonialsSection() {
   );
 
   return (
-    <section id="reviews" style={{ padding: "100px 24px", overflow: "hidden" }}>
+    <section id="reviews" style={{ padding: "48px 24px", overflow: "hidden" }}>
       <AnimSection>
-        <div style={{ textAlign: "center", marginBottom: 56 }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
           <p style={{
-            fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
-            color: "var(--gold)", marginBottom: 12, fontFamily: "var(--font-display)",
+            fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
+            color: "var(--gold)", marginBottom: 8, fontFamily: "var(--font-display)",
           }}>Testimonials</p>
           <h2 style={{
             fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 800, letterSpacing: "-1px",
@@ -1667,9 +1669,9 @@ function WhySection() {
   ];
 
   return (
-    <section id="why" style={{ padding: "100px 24px", maxWidth: 800, margin: "0 auto" }}>
+    <section id="why" style={{ padding: "48px 24px", maxWidth: 800, margin: "0 auto" }}>
       <AnimSection>
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
           <h2 style={{
             fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 800,
             letterSpacing: "-1px",
@@ -1716,12 +1718,12 @@ function FAQSection() {
   const [open, setOpen] = useState(null);
 
   return (
-    <section style={{ padding: "100px 24px", maxWidth: 760, margin: "0 auto" }}>
+    <section style={{ padding: "48px 24px", maxWidth: 760, margin: "0 auto" }}>
       <AnimSection>
-        <div style={{ textAlign: "center", marginBottom: 56 }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
           <p style={{
-            fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
-            color: "var(--accent-secondary-light)", marginBottom: 12, fontFamily: "var(--font-display)",
+            fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
+            color: "var(--accent-secondary-light)", marginBottom: 8, fontFamily: "var(--font-display)",
           }}>FAQ</p>
           <h2 style={{
             fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 800,
@@ -1735,7 +1737,7 @@ function FAQSection() {
         </div>
       </AnimSection>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         {faqs.map((faq, i) => (
           <AnimSection key={i} delay={i < 4 ? `delay-${i + 1}` : ""}>
             <div style={{
@@ -1746,7 +1748,7 @@ function FAQSection() {
             }}>
               <button onClick={() => setOpen(open === i ? null : i)} style={{
                 width: "100%", display: "flex", alignItems: "center",
-                justifyContent: "space-between", padding: "20px 24px",
+                justifyContent: "space-between", padding: "16px 20px",
                 background: "none", border: "none", color: "var(--text-primary)",
                 fontSize: 15, fontWeight: 600, cursor: "pointer",
                 fontFamily: "var(--font-display)", textAlign: "left",
