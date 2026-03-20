@@ -268,6 +268,13 @@ function Navbar() {
 }
 
 // ——— GLOBE HERO + LANGUAGE SELECTOR ———
+const LANG_CDN = "https://kalakar-cdn.b-cdn.net/Captioned%20Languages";
+function langVideoUrl(lang) {
+  if (lang.id === "English" || lang.id === "Malay") return `${LANG_CDN}/One%20Standard/${lang.id}.mp4`;
+  const cdnName = lang.id === "Bengali" ? "Bangali" : lang.id;
+  return `${LANG_CDN}/Native/${cdnName}.mp4`;
+}
+
 const globeLanguages = [
   { id: "Pushto", native: "پښتو", font: "'Noto Nastaliq Urdu', serif", lat: 34.5, lon: 71.5, sz: 12 },
   { id: "Urdu", native: "اردو", font: "'Noto Nastaliq Urdu', serif", lat: 30.0, lon: 68.0, sz: 16 },
@@ -574,10 +581,10 @@ function GlobeHeroSection() {
             textTransform: "uppercase", marginBottom: 4,
             fontFamily: "var(--font-display)",
           }}>Select your language</div>
-          {/* Phone frame */}
+          {/* Phone frame — 9:16 aspect ratio to match video */}
           <div style={{
-            width: 155, height: 280, border: "2px solid #2a2a2e",
-            borderRadius: 22, overflow: "hidden",
+            width: 162, height: 288, border: "2px solid #2a2a2e",
+            borderRadius: 24, overflow: "hidden",
             background: "rgba(14,14,16,0.92)", backdropFilter: "blur(12px)",
             position: "relative", display: "flex", alignItems: "center",
             justifyContent: "center",
@@ -592,20 +599,17 @@ function GlobeHeroSection() {
               videoFailed ? (
                 <div style={{ color: "#555", fontSize: 11, padding: 14, textAlign: "center" }}>Preview unavailable</div>
               ) : (
-                <div style={{ textAlign: "center" }}>
-                  <div style={{
-                    fontSize: 9, color: "var(--accent)", marginBottom: 2,
-                    letterSpacing: 1, fontFamily: "var(--font-display)",
-                  }}>{selectedLang.id.toUpperCase()}</div>
-                  <video
-                    key={selectedLang.id}
-                    width="128" height="228"
-                    autoPlay muted loop playsInline
-                    style={{ borderRadius: 8, objectFit: "cover", background: "#000" }}
-                    src={`https://kalakar-cdn.b-cdn.net/Captioned%20Languages/One%20Standard/${selectedLang.id}.mp4`}
-                    onError={() => setVideoFailed(true)}
-                  />
-                </div>
+                <video
+                  key={selectedLang.id}
+                  autoPlay muted loop playsInline
+                  style={{
+                    width: "100%", height: "100%",
+                    objectFit: "cover", background: "#000",
+                    borderRadius: 22, display: "block",
+                  }}
+                  src={langVideoUrl(selectedLang)}
+                  onError={() => setVideoFailed(true)}
+                />
               )
             ) : (
               <div style={{ color: "#444", fontSize: 11, textAlign: "center", padding: 14 }}>
