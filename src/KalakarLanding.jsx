@@ -680,58 +680,57 @@ function GlobeHeroSection() {
 // ——— TEMPLATES MARQUEE ———
 function TemplatesSection() {
   const templates = [
-    { name: "Devin Jatho", tag: "Fully customizable", img: "https://framerusercontent.com/images/ViUEuCGRVgYPqSq8F0UYT3xvwk.png?width=274&height=427" },
-    { name: "Editing Skool", tag: "Fully customizable", img: "https://framerusercontent.com/images/Z9qE4Jj1LUklvFbrpe81skzOiKw.png?width=264&height=428" },
-    { name: "Mr Beast", tag: "Fully customizable", img: "https://framerusercontent.com/images/eZAgB0PS9mH4LOu1ba4RgZratNU.png?width=260&height=432" },
-    { name: "Ali Abdaal", tag: "Fully customizable", img: "https://framerusercontent.com/images/769YZT2otKXGbpYJRC8OStInOI.png?width=262&height=432" },
-    { name: "Alex Hormozi", tag: "Partially customizable", img: "https://framerusercontent.com/images/JkJ0KyIYOf2LPS0bJe6WJ87VWo.png?width=265&height=425" },
-    { name: "Iman Gadzhi", tag: "Fully customizable", img: "https://framerusercontent.com/images/9hchyEyOoRmhIljen2bOehg.png?width=256&height=428" },
-    { name: "Bubble Style", tag: "Fully customizable", img: "https://framerusercontent.com/images/PIjzhFoA55OJlqoevzRCqFzRIs.png?width=264&height=439" },
+    { name: "Ali Abdaal", tag: "Fully customizable", img: "https://framerusercontent.com/images/769YZT2otKXGbpYJRC8OStInOI.png?width=262&height=432", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Ali%20Abdaal%20(Fully%20customizable).mp4" },
+    { name: "Mr Beast", tag: "Fully customizable", img: "https://framerusercontent.com/images/eZAgB0PS9mH4LOu1ba4RgZratNU.png?width=260&height=432", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Mr%20Beast%20(Fully%20customizable).mp4" },
+    { name: "Iman Gadzhi", tag: "Fully customizable", img: "https://framerusercontent.com/images/9hchyEyOoRmhIljen2bOehg.png?width=256&height=428", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Iman%20Gadzhi%20(Fully%20customizable).mp4" },
+    { name: "Alex Hormozi", tag: "Partially customizable", img: "https://framerusercontent.com/images/JkJ0KyIYOf2LPS0bJe6WJ87VWo.png?width=265&height=425", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Alex%20Hormozi%20(Partially%20customizable).mp4" },
+    { name: "Devin Jatho", tag: "Fully customizable", img: "https://framerusercontent.com/images/ViUEuCGRVgYPqSq8F0UYT3xvwk.png?width=274&height=427", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Devin%20Jatho%20(Fully%20customizable).mp4" },
+    { name: "Editing Skool", tag: "Fully customizable", img: "https://framerusercontent.com/images/Z9qE4Jj1LUklvFbrpe81skzOiKw.png?width=264&height=428", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Editing%20Skool(Fully%20customizable).mp4" },
+    { name: "Bubble Style", tag: "Fully customizable", img: "https://framerusercontent.com/images/PIjzhFoA55OJlqoevzRCqFzRIs.png?width=264&height=439", video: "https://kalakar-cdn.b-cdn.net/Creator%20Templates%20%20Styles/Bubble%20Style%20(Fully%20customizable).mp4" },
   ];
 
-  const row1 = [...templates, ...templates, ...templates, ...templates];
-  const row2 = [...[...templates].reverse(), ...[...templates].reverse(), ...[...templates].reverse(), ...[...templates].reverse()];
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef(null);
+  const n = templates.length;
 
-  const TemplateCard = ({ t }) => (
-    <div style={{
-      width: 170, height: 270, flexShrink: 0,
-      borderRadius: 18, overflow: "hidden",
-      background: "var(--bg-card)",
-      border: "1px solid var(--border)",
-      cursor: "pointer",
-      transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
-      position: "relative",
-    }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; e.currentTarget.style.borderColor = "rgba(3,255,178,0.25)"; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.borderColor = "var(--border)"; }}
-    >
-      <img
-        src={t.img}
-        alt={t.name}
-        loading="lazy"
-        style={{
-          width: "100%", height: 205, objectFit: "cover", display: "block",
-        }}
-        onError={e => { e.target.style.display = "none"; }}
-      />
-      <div style={{ padding: "10px 14px" }}>
-        <div style={{
-          fontWeight: 600, fontSize: 13, color: "var(--text-primary)",
-          fontFamily: "var(--font-display)",
-        }}>{t.name}</div>
-        <div style={{
-          fontSize: 10, fontWeight: 600, marginTop: 3,
-          color: "var(--accent)", textTransform: "uppercase",
-          letterSpacing: "0.5px", fontFamily: "var(--font-display)",
-        }}>{t.tag}</div>
-      </div>
-    </div>
-  );
+  const go = (dir) => setActiveIdx(prev => (prev + dir + n) % n);
+
+  // Positions: -3, -2, -1, 0 (center), 1, 2, 3
+  const getCardStyle = (offset) => {
+    const absOff = Math.abs(offset);
+    if (absOff > 3) return { display: "none" };
+    const isCenter = offset === 0;
+    // Scale: center=1, ±1=0.75, ±2=0.55, ±3=0.4
+    const scale = isCenter ? 1 : absOff === 1 ? 0.75 : absOff === 2 ? 0.55 : 0.4;
+    // Translate X: each step moves further out
+    const xBase = isCenter ? 0 : offset * (absOff === 1 ? 220 : absOff === 2 ? 360 : 440);
+    // Z depth
+    const zVal = isCenter ? 0 : -absOff * 120;
+    const opacity = isCenter ? 1 : absOff === 1 ? 0.8 : absOff === 2 ? 0.5 : 0.3;
+
+    return {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      width: isCenter ? 320 : 260,
+      height: isCenter ? 480 : 400,
+      transform: `translate(-50%, -50%) translateX(${xBase}px) translateZ(${zVal}px) scale(${scale})`,
+      opacity,
+      zIndex: 10 - absOff,
+      transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+      borderRadius: isCenter ? 24 : 18,
+      overflow: "hidden",
+      cursor: isCenter ? "default" : "pointer",
+      border: isCenter ? "2px solid rgba(255,255,255,0.12)" : "1px solid rgba(255,255,255,0.06)",
+      boxShadow: isCenter ? "0 30px 80px rgba(0,0,0,0.5)" : "none",
+    };
+  };
 
   return (
-    <section style={{ padding: "48px 0 48px", overflow: "hidden" }}>
+    <section style={{ padding: "48px 0 56px", overflow: "hidden" }}>
       <AnimSection>
-        <div style={{ textAlign: "center", marginBottom: 32, padding: "0 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 40, padding: "0 24px" }}>
           <p style={{
             fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "2px",
             color: "var(--accent)", marginBottom: 8,
@@ -751,24 +750,142 @@ function TemplatesSection() {
         </div>
       </AnimSection>
 
-      {/* Marquee Row 1 */}
-      <div className="marquee-track" style={{ overflow: "hidden", marginBottom: 16 }}>
-        <div className="marquee-inner" style={{
-          display: "flex", gap: 16, width: "max-content",
-          animation: "marqueeLeft 40s linear infinite",
-        }}>
-          {row1.map((t, i) => <TemplateCard key={`r1-${i}`} t={t} />)}
-        </div>
+      {/* 3D Carousel */}
+      <div style={{
+        position: "relative", height: 520, perspective: 1200,
+        maxWidth: 1200, margin: "0 auto",
+      }}>
+        {templates.map((t, i) => {
+          let offset = i - activeIdx;
+          // Wrap around
+          if (offset > Math.floor(n / 2)) offset -= n;
+          if (offset < -Math.floor(n / 2)) offset += n;
+          const style = getCardStyle(offset);
+          if (style.display === "none") return null;
+          const isCenter = offset === 0;
+
+          return (
+            <div
+              key={t.name}
+              style={style}
+              onClick={() => !isCenter && setActiveIdx(i)}
+            >
+              {isCenter ? (
+                /* Center card: video */
+                <>
+                  <video
+                    ref={videoRef}
+                    key={`vid-${t.name}`}
+                    autoPlay loop playsInline
+                    muted={isMuted}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                    src={t.video}
+                    poster={t.img}
+                  />
+                  {/* Bottom overlay with name + mute */}
+                  <div style={{
+                    position: "absolute", bottom: 0, left: 0, right: 0,
+                    padding: "40px 20px 18px",
+                    background: "linear-gradient(transparent, rgba(0,0,0,0.8))",
+                  }}>
+                    <div style={{ fontWeight: 700, fontSize: 16, fontFamily: "var(--font-display)" }}>{t.name}</div>
+                    <div style={{
+                      fontSize: 12, fontWeight: 500, color: "var(--accent)",
+                      fontFamily: "var(--font-display)", marginTop: 2,
+                    }}>{t.tag}</div>
+                  </div>
+                  {/* Mute toggle */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); }}
+                    style={{
+                      position: "absolute", bottom: 18, right: 18,
+                      width: 36, height: 36, borderRadius: 10,
+                      background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)",
+                      backdropFilter: "blur(8px)", cursor: "pointer",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: "#fff", zIndex: 2,
+                    }}
+                  >
+                    {isMuted ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/>
+                      </svg>
+                    )}
+                  </button>
+                </>
+              ) : (
+                /* Side cards: image only */
+                <img
+                  src={t.img}
+                  alt={t.name}
+                  loading="lazy"
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* Marquee Row 2 */}
-      <div className="marquee-track" style={{ overflow: "hidden" }}>
-        <div className="marquee-inner" style={{
-          display: "flex", gap: 16, width: "max-content",
-          animation: "marqueeRight 45s linear infinite",
-        }}>
-          {row2.map((t, i) => <TemplateCard key={`r2-${i}`} t={t} />)}
+      {/* Navigation bar */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "center",
+        gap: 16, marginTop: 24,
+      }}>
+        <button
+          onClick={() => go(-1)}
+          style={{
+            width: 40, height: 40, borderRadius: 12,
+            background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+            color: "#fff", cursor: "pointer", display: "flex",
+            alignItems: "center", justifyContent: "center",
+            transition: "all 0.2s",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+
+        {/* Thumbnails / dots */}
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          {templates.map((t, i) => (
+            <button
+              key={t.name}
+              onClick={() => setActiveIdx(i)}
+              style={{
+                width: activeIdx === i ? 28 : 8,
+                height: 8, borderRadius: 4, border: "none",
+                background: activeIdx === i ? "var(--accent)" : "rgba(255,255,255,0.2)",
+                cursor: "pointer", transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                padding: 0,
+              }}
+            />
+          ))}
         </div>
+
+        <button
+          onClick={() => go(1)}
+          style={{
+            width: 40, height: 40, borderRadius: 12,
+            background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+            color: "#fff", cursor: "pointer", display: "flex",
+            alignItems: "center", justifyContent: "center",
+            transition: "all 0.2s",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
       </div>
     </section>
   );
