@@ -509,6 +509,12 @@ function GlobeHeroSection() {
   return (
     <div ref={trackRef} style={{ height: "300vh", position: "relative" }}>
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
+        {/* Bottom fade — blends into next section */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "30%",
+          background: "linear-gradient(to bottom, transparent 0%, #0a0a0a 100%)",
+          zIndex: 4, pointerEvents: "none",
+        }} />
         {/* Canvas */}
         <canvas
           ref={canvasRef}
