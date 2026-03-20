@@ -1626,36 +1626,18 @@ function TestimonialsSection() {
   );
 }
 
-// ——— MAGIC TEXT (scroll-reveal word-by-word) ———
+// ——— MAGIC TEXT (scroll-reveal word-by-word, sequential paragraphs) ———
 function MagicWord({ children, progress, range }) {
   const opacity = useTransform(progress, range, [0, 1]);
   return (
     <span style={{
-      position: "relative", marginTop: 8, marginRight: 5,
-      fontSize: "clamp(14px, 2.2vw, 24px)", fontWeight: 500, lineHeight: 1.7,
+      position: "relative", marginRight: 4,
+      fontSize: "clamp(13px, 1.4vw, 16px)", fontWeight: 400, lineHeight: 1.8,
       fontFamily: "var(--font-body)",
     }}>
       <span style={{ opacity: 0.12 }}>{children}</span>
       <motion.span style={{ opacity, position: "absolute", left: 0, top: 0 }}>{children}</motion.span>
     </span>
-  );
-}
-
-function MagicText({ text }) {
-  const container = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: container,
-    offset: ["start 0.9", "start 0.25"],
-  });
-  const words = text.split(" ");
-  return (
-    <p ref={container} style={{ display: "flex", flexWrap: "wrap", lineHeight: 0.5, padding: "8px 0" }}>
-      {words.map((word, i) => {
-        const start = i / words.length;
-        const end = start + 1 / words.length;
-        return <MagicWord key={i} progress={scrollYProgress} range={[start, end]}>{word}</MagicWord>;
-      })}
-    </p>
   );
 }
 
@@ -1667,6 +1649,30 @@ function WhySection() {
     "And after months of Development, deep research & analysis, we finally launched Beta version of Kalakar on 28th of April, around 50 Editors and Creators from across south Asia used it, gave us constant feedback and we literally made it exactly how a south Asian would want it.",
     "Because Kalakar is built by actual creators and editors, we are very much community centric. We are constantly developing & improving exactly to meet the needs for South Asia and we will keep on developing technologies that would cater to our Market, no more asking for help from Gora Market, we are here!",
   ];
+
+  // Single scroll container drives all paragraphs sequentially
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 0.85", "end 0.3"],
+  });
+
+  // Build a flat list of all words with their global progress ranges
+  const allWords = [];
+  const totalWords = paragraphs.reduce((sum, p) => sum + p.split(" ").length, 0);
+  let wordIndex = 0;
+
+  paragraphs.forEach((p) => {
+    const words = p.split(" ");
+    const paraWords = [];
+    words.forEach((word) => {
+      const start = wordIndex / totalWords;
+      const end = (wordIndex + 1) / totalWords;
+      paraWords.push({ word, start, end });
+      wordIndex++;
+    });
+    allWords.push(paraWords);
+  });
 
   return (
     <section id="why" style={{ padding: "48px 24px", maxWidth: 800, margin: "0 auto" }}>
@@ -1686,15 +1692,21 @@ function WhySection() {
       </AnimSection>
 
       {/* Letter-style card */}
-      <div style={{
+      <div ref={containerRef} style={{
         background: "rgba(20,20,20,0.4)",
         border: "1px solid rgba(255,255,255,0.04)",
-        borderRadius: 24, padding: "48px 40px",
+        borderRadius: 24, padding: "36px 32px",
         borderLeft: "3px solid var(--highlight)",
       }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {paragraphs.map((p, i) => (
-            <MagicText key={i} text={p} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {allWords.map((paraWords, pi) => (
+            <p key={pi} style={{ display: "flex", flexWrap: "wrap", margin: 0 }}>
+              {paraWords.map((w, wi) => (
+                <MagicWord key={wi} progress={scrollYProgress} range={[w.start, w.end]}>
+                  {w.word}
+                </MagicWord>
+              ))}
+            </p>
           ))}
         </div>
       </div>
