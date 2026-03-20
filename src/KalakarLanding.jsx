@@ -581,10 +581,10 @@ function GlobeHeroSection() {
             textTransform: "uppercase", marginBottom: 4,
             fontFamily: "var(--font-display)",
           }}>Select your language</div>
-          {/* Phone frame — 9:16 aspect ratio to match video */}
+          {/* Phone frame — 1:1 square to match 1920×1920 video */}
           <div style={{
-            width: 162, height: 288, border: "2px solid #2a2a2e",
-            borderRadius: 24, overflow: "hidden",
+            width: 200, height: 200, border: "2px solid #2a2a2e",
+            borderRadius: 20, overflow: "hidden",
             background: "rgba(14,14,16,0.92)", backdropFilter: "blur(12px)",
             position: "relative", display: "flex", alignItems: "center",
             justifyContent: "center",
@@ -592,8 +592,8 @@ function GlobeHeroSection() {
             {/* Notch */}
             <div style={{
               position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
-              width: 52, height: 10, background: "var(--bg-primary)",
-              borderRadius: "0 0 8px 8px", zIndex: 2,
+              width: 48, height: 8, background: "var(--bg-primary)",
+              borderRadius: "0 0 6px 6px", zIndex: 2,
             }} />
             {selectedLang ? (
               videoFailed ? (
@@ -605,7 +605,7 @@ function GlobeHeroSection() {
                   style={{
                     width: "100%", height: "100%",
                     objectFit: "cover", background: "#000",
-                    borderRadius: 22, display: "block",
+                    borderRadius: 18, display: "block",
                   }}
                   src={langVideoUrl(selectedLang)}
                   onError={() => setVideoFailed(true)}
